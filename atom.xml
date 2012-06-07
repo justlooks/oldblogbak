@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-05-15T03:28:05+00:00</updated>
+  <updated>2012-06-07T06:22:39+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,55 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[如何更换octpress主题]]></title>
+    <link href="http://justlooks.github.com/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/"/>
+    <updated>2012-06-07T06:12:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti</id>
+    <content type="html"><![CDATA[<p>Octopress在2.0之后添加了source/_includes/custom目录</p>
+
+<blockquote><p>source/</p>
+
+<pre><code>_includes/   #关于布局的目录
+   custom/   # 这个目录可以调整页面头部,导航栏,页脚以及边栏
+   asides/   # 这个目录关于主题边栏部分
+   post/     # 这个目录关于帖子的元数据,分享以及评论部分
+_layouts/    # 这个目录关于页面布局,帖子以及类型归档等
+</code></pre>
+
+<p>mv index.html blog/index.html</p></blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于mysql分区]]></title>
+    <link href="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/"/>
+    <updated>2012-05-22T01:43:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu</id>
+    <content type="html"><![CDATA[<p>Mysql对于hash和key分区模式有两种键值映射模式,liner和regular</p>
+
+<ol>
+<li>liner映射模式
+首先决定V值,算法为(如果有N个分区)
+POWER(2, CEILING( LOG(2,N) ) )
+比如在6个分区情况下,V值为8</li>
+</ol>
+
+
+<p>  然后决定存储到哪个分区,采用对V值取余运算
+  T=f(列值)&amp;(V-1)
+  如果计算得到的值T不小于总分区数的话,则进行额外运算
+  T&amp;CEILING(V/2)</p>
+
+<p>优点是添加,删除合并以及分割分区非常快,缺点是分区的数据不是均匀分布</p>
+
+<ol>
+<li></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于markdown的使用]]></title>
@@ -22,7 +71,7 @@
 
 <hr />
 
-<h4>关于文本格式</h4>
+<h4>文本格式</h4>
 
 <p>1.标题<br/>
 可以用1个到6个#来表达标题大小</p>
@@ -78,7 +127,7 @@
 
 <hr />
 
-<h4>关于链接</h4>
+<h4>链接和图片</h4>
 
 <p>1.文本中插入超连接</p>
 

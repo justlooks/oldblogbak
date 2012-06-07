@@ -2,14 +2,22 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://justlooks.github.com/blog/2012/05/14/for-test/</loc>
-        <lastmod>2012-05-15T03:28:01+00:00</lastmod>
+        <lastmod>2012-05-16T06:36:35+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/</loc>
+        <lastmod>2012-05-22T06:59:17+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://justlooks.github.com/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/</loc>
+        <lastmod>2012-06-07T06:22:16+00:00</lastmod>
     </url>
     <url>
         <loc>http://justlooks.github.com/blog/archives/</loc>
-        <lastmod>2012-05-15T03:28:01+00:00</lastmod>
+        <lastmod>2012-06-07T06:22:16+00:00</lastmod>
     </url>
     <url>
-        <loc>http://justlooks.github.com/</loc>
-        <lastmod>2012-05-15T03:28:01+00:00</lastmod>
+        <loc>http://justlooks.github.com/blog/</loc>
+        <lastmod>2012-06-07T06:22:16+00:00</lastmod>
     </url>
 </urlset>

@@ -5,14 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Strawhouse</title>
+  <title>关于mysql分区 - Strawhouse</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content=" Blog Archive 2012 如何更换octpress主题
-Jun 07 2012 关于mysql分区
-May 22 2012 关于markdown的使用
-May 14 2012 Recent Posts 如何更换octpress主题 关于mysql分区 关于markdown的使用 ">
+  <meta name="description" content="Mysql对于hash和key分区模式有两种键值映射模式,liner和regular liner映射模式
+首先决定V值,算法为(如果有N个分区)
+POWER(2, CEILING( LOG(2,N) ) )
+比如在6个分区情况下,V值为8 然后决定存储到哪个分区,采用对V值取余运算 T=f(列值 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +21,7 @@ May 14 2012 Recent Posts 如何更换octpress主题 关于mysql分区 关于mark
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/archives">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -67,51 +67,98 @@ May 14 2012 Recent Posts 如何更换octpress主题 关于mysql分区 关于mark
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">关于mysql分区</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-22T01:43:00+00:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>Mysql对于hash和key分区模式有两种键值映射模式,liner和regular</p>
 
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a></h1>
-<time datetime="2012-06-07T06:12:00+00:00" pubdate><span class='month'>Jun</span> <span class='day'>07</span> <span class='year'>2012</span></time>
-
-
-</article>
+<ol>
+<li>liner映射模式
+首先决定V值,算法为(如果有N个分区)
+POWER(2, CEILING( LOG(2,N) ) )
+比如在6个分区情况下,V值为8</li>
+</ol>
 
 
+<p>  然后决定存储到哪个分区,采用对V值取余运算
+  T=f(列值)&amp;(V-1)
+  如果计算得到的值T不小于总分区数的话,则进行额外运算
+  T&amp;CEILING(V/2)</p>
 
-<article>
-  
-<h1><a href="/blog/2012/05/22/guan-yu-mysqlfen-qu/">关于mysql分区</a></h1>
-<time datetime="2012-05-22T01:43:00+00:00" pubdate><span class='month'>May</span> <span class='day'>22</span> <span class='year'>2012</span></time>
+<p>优点是添加,删除合并以及分割分区非常快,缺点是分区的数据不是均匀分布</p>
 
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/05/14/for-test/">关于markdown的使用</a></h1>
-<time datetime="2012-05-14T07:35:00+00:00" pubdate><span class='month'>May</span> <span class='day'>14</span> <span class='year'>2012</span></time>
-
-
-</article>
+<ol>
+<li></li>
+</ol>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-22T01:43:00+00:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/05/14/for-test/" title="Previous Post: 关于markdown的使用">&laquo; 关于markdown的使用</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/" title="Next Post: 如何更换octpress主题">如何更换octpress主题 &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
 
 </div>
