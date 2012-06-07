@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Strawhouse]]></title>
   <link href="http://justlooks.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-07T08:31:18+00:00</updated>
+  <updated>2012-06-07T08:46:28+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -54,13 +54,29 @@
 
 <p>mission two:添加一个twitter侧栏</p>
 
-<p>更新最新的octopress代码</p>
+<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
 
 <pre><code># cd octopress
 # git pull octopress master
 # bundle install
 # rake update_source
 # rake update_style
+</code></pre>
+
+<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
+
+<pre><code># cp source/_includes/asides source/_includes/custom/asides
+</code></pre>
+
+<p>编辑_config.yml文件,添加下列文本为</p>
+
+<pre><code>page_asides: [custom/asides/twitter.html]
+</code></pre>
+
+<p>然后更新</p>
+
+<pre><code># rake generate
+# rake deploy
 </code></pre>
 ]]></content>
   </entry>
