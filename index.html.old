@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Strawhouse</title>
+  <title>index - Strawhouse</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Blog Archive 2012 如何更换octpress主题
-Jun 07 2012 关于mysql分区
-May 22 2012 关于markdown的使用
-May 14 2012 posted in octopress Recent Posts 如何更换octpress主题 &hellip;">
+  <meta name="description" content=" Index Jun 7th, 2012 Jun 7th, 2012 Recent Posts 如何更换octpress主题 关于mysql分区 关于markdown的使用 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ May 14 2012 posted in octopress Recent Posts 如何更换octpress主题 &hellip;
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/archives">
+  <link rel="canonical" href="http://justlooks.github.com/.old">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -70,51 +67,51 @@ May 14 2012 posted in octopress Recent Posts 如何更换octpress主题 &hellip;
 <article role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
-    
+    <h1 class="entry-title">Index</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-07T06:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time></p>
   </header>
   
-  <div id="blog-archives">
+  
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
 
 
 
   
-  <h2>2012</h2>
 
-<article>
+
+<time datetime="2012-06-07T06:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+        
+      </p>
+      
+        <div class="sharing">
   
-<h1><a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a></h1>
-<time datetime="2012-06-07T06:12:00+00:00" pubdate><span class='month'>Jun</span> <span class='day'>07</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
   
-<h1><a href="/blog/2012/05/22/guan-yu-mysqlfen-qu/">关于mysql分区</a></h1>
-<time datetime="2012-05-22T01:43:00+00:00" pubdate><span class='month'>May</span> <span class='day'>22</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
   
-<h1><a href="/blog/2012/05/14/for-test/">关于markdown的使用</a></h1>
-<time datetime="2012-05-14T07:35:00+00:00" pubdate><span class='month'>May</span> <span class='day'>14</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/octopress/'>octopress</a></span>
-</footer>
-
-
-</article>
-
 </div>
 
+      
+    </footer>
   
 </article>
 
