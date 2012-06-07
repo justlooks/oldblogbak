@@ -5,14 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>关于markdown的使用 - Strawhouse</title>
+  <title>修改导航栏 - Strawhouse</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下 文本格式 1.标题
-可以用1个到6个#来表达标题大小 ####标题 2.水平线
-由3个或者以上-或者*组成 ----
-**** 3.换行由2个以上空格组成 4.段落分割使用空行 5. &hellip;">
+  <meta name="description" content="mission one:需要在页面增加一个新的page,比如about 首先生成source目录下的about目录,以及内容 # rake new_page["about/about.html"]
+# rake new_nage["about"] # 这将在about目录下生成about. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/2012/05/14/for-test/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/06/07/xiu-gai-dao-hang-lan/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -72,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">关于markdown的使用</h1>
+      <h1 class="entry-title">修改导航栏</h1>
     
     
       <p class="meta">
@@ -88,129 +86,56 @@
   
 
 
-<time datetime="2012-05-14T07:35:00+00:00" pubdate data-updated="true">May 14<span>th</span>, 2012</time>
+<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下</p>
+<div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
 
 <hr />
 
-<h4>文本格式</h4>
+<p>首先生成source目录下的about目录,以及内容</p>
 
-<p>1.标题<br/>
-可以用1个到6个#来表达标题大小</p>
-
-<pre><code>####标题
+<pre><code># rake new_page["about/about.html"]
+# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
 </code></pre>
 
-<p>2.水平线<br/>
-由3个或者以上-或者*组成</p>
+<p>接着修改导航栏添加到about.html页面的导航</p>
 
-<pre><code>----
-****
+<pre><code># cd octopress/source/_includes/custom
+# vi navigation.html
 </code></pre>
 
-<p>3.换行由2个以上空格组成</p>
+<p>添加如下代码</p>
 
-<p>4.段落分割使用空行</p>
-
-<p>5.关于有序列表和无序列表</p>
-
-<h6>有序列表</h6>
-
-<p>在列表前加入数字，之后加一个英文句点，在加一个空格</p>
-
-<pre><code>1. 项目１
-2. 项目２
-3. 项目３
+<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
 </code></pre>
 
-<h6>无序列表</h6>
+<p>这样在导航栏就有了about页面的导航选项了</p>
 
-<p>在列表前添加*,+或者-,并在之后加1空格</p>
+<p>需要更新下修改后的octopress代码</p>
 
-<pre><code>* 项目 1
-+ 项目 2
-- 项目 3
+<pre><code># rake update_source
+# rake generate
+# rake deploy
 </code></pre>
 
-<!-- more -->
-
-
-<h6>列表缩排</h6>
-
-<p>子项目用tab键缩进</p>
-
-<pre><code>1. 项目1
-    + 分项1
-    - 分项2
-    * 分项3
-2. 项目2
-    + 分项4
-    - 分项5
-    * 分项6
-3. 项目3
-</code></pre>
+<p>这样的话更新就体现在github网站上了</p>
 
 <hr />
 
-<h4>链接和图片</h4>
+<p>mission two:添加一个twitter侧栏</p>
 
-<p>1.文本中插入超连接</p>
+<p>更新最新的octopress代码</p>
 
-<pre><code>&lt;http://myblog.org&gt;
-</code></pre>
-
-<p>或者为文字添加连接，及注释</p>
-
-<pre><code>[mytext](http://myblog.org "我是注释")
-</code></pre>
-
-<p>2.插入图片</p>
-
-<pre><code>![我的图片](http://我的图片url "我是注释")
-</code></pre>
-
-<hr />
-
-<h4>引用和代码插入</h4>
-
-<p>1.使用>开头能够引用一段文本,在引用中能够使用markdown的语法</p>
-
-<pre><code>&gt; ___这里是引用文本部分___
-&gt;&gt; 子引用
-</code></pre>
-
-<p>2.有两种方式来插入代码，将代码用`符号包围或者每行要插入的代码文本之前加个tab
-<code>perl -e 'print "i love perl"'</code></p>
-
-<pre><code>perl -e 'print "i love perl"'
-</code></pre>
-
-<hr />
-
-<h4>字体</h4>
-
-<h6>粗体</h6>
-
-<pre><code>__文本__
-**文本**
-</code></pre>
-
-<h6>斜体</h6>
-
-<pre><code>_文本_
-*文本*
-</code></pre>
-
-<h6>粗斜体</h6>
-
-<pre><code>___文本___
-***文本***
+<pre><code># cd octopress
+# git pull octopress master
+# bundle install
+# rake update_source
+# rake update_style
 </code></pre>
 </div>
 
@@ -234,7 +159,7 @@
   
 
 
-<time datetime="2012-05-14T07:35:00+00:00" pubdate data-updated="true">May 14<span>th</span>, 2012</time>
+<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
       
 
 <span class="categories">
@@ -255,8 +180,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/" title="Previous Post: 如何更换octpress主题">&laquo; 如何更换octpress主题</a>
       
-        <a class="basic-alignment right" href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/" title="Next Post: 如何更换octpress主题">如何更换octpress主题 &raquo;</a>
       
     </p>
   </footer>
