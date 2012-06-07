@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-07T06:41:17+00:00</updated>
+  <updated>2012-06-07T06:53:27+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -30,35 +30,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 </code></pre>
 
 <p>mv index.html blog/index.html</p></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[关于mysql分区]]></title>
-    <link href="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/"/>
-    <updated>2012-05-22T01:43:00+00:00</updated>
-    <id>http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu</id>
-    <content type="html"><![CDATA[<p>Mysql对于hash和key分区模式有两种键值映射模式,liner和regular</p>
-
-<ol>
-<li>liner映射模式
-首先决定V值,算法为(如果有N个分区)
-POWER(2, CEILING( LOG(2,N) ) )
-比如在6个分区情况下,V值为8</li>
-</ol>
-
-
-<p>  然后决定存储到哪个分区,采用对V值取余运算
-  T=f(列值)&amp;(V-1)
-  如果计算得到的值T不小于总分区数的话,则进行额外运算
-  T&amp;CEILING(V/2)</p>
-
-<p>优点是添加,删除合并以及分割分区非常快,缺点是分区的数据不是均匀分布</p>
-
-<ol>
-<li></li>
-</ol>
-
 ]]></content>
   </entry>
   
@@ -109,6 +80,9 @@ POWER(2, CEILING( LOG(2,N) ) )
 + 项目 2
 - 项目 3
 </code></pre>
+
+<!-- more -->
+
 
 <h6>列表缩排</h6>
 

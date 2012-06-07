@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Strawhouse</title>
+  <title>blog - Strawhouse</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Octopress在2.0之后添加了source/_includes/custom目录 source/ _includes/ #关于布局的目录 custom/ # 这个目录可以调整页面头部,导航栏,页脚以及边栏 asides/ # 这个目录关于主题边栏部分 post/ # 这个目录关于帖子的元数据 &hellip;">
+  <meta name="description" content=" Blog Jun 7th, 2012 Jun 7th, 2012 Recent Posts 如何更换octpress主题 关于markdown的使用 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -63,19 +63,33 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article role="article">
   
-  
-  
-    <article>
-      
   <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a></h1>
-    
-    
+    <h1 class="entry-title">Blog</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-07T06:46:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time></p>
+  </header>
+  
+  
+
+  
+    <footer>
       <p class="meta">
         
+        
 
 
 
@@ -87,243 +101,23 @@
   
 
 
-<time datetime="2012-06-07T06:12:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+<time datetime="2012-06-07T06:46:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
         
       </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Octopress在2.0之后添加了source/_includes/custom目录</p>
-
-<blockquote><p>source/</p>
-
-<pre><code>_includes/   #关于布局的目录
-   custom/   # 这个目录可以调整页面头部,导航栏,页脚以及边栏
-   asides/   # 这个目录关于主题边栏部分
-   post/     # 这个目录关于帖子的元数据,分享以及评论部分
-_layouts/    # 这个目录关于页面布局,帖子以及类型归档等
-</code></pre>
-
-<p>mv index.html blog/index.html</p></blockquote>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/guan-yu-mysqlfen-qu/">关于mysql分区</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+        <div class="sharing">
   
-
-
-<time datetime="2012-05-22T01:43:00+00:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Mysql对于hash和key分区模式有两种键值映射模式,liner和regular</p>
-
-<ol>
-<li>liner映射模式
-首先决定V值,算法为(如果有N个分区)
-POWER(2, CEILING( LOG(2,N) ) )
-比如在6个分区情况下,V值为8</li>
-</ol>
-
-
-<p>  然后决定存储到哪个分区,采用对V值取余运算
-  T=f(列值)&amp;(V-1)
-  如果计算得到的值T不小于总分区数的话,则进行额外运算
-  T&amp;CEILING(V/2)</p>
-
-<p>优点是添加,删除合并以及分割分区非常快,缺点是分区的数据不是均匀分布</p>
-
-<ol>
-<li></li>
-</ol>
-
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/14/for-test/">关于markdown的使用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+    </footer>
   
+</article>
 
-
-<time datetime="2012-05-14T07:35:00+00:00" pubdate data-updated="true">May 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下</p>
-
-<hr />
-
-<h4>文本格式</h4>
-
-<p>1.标题<br/>
-可以用1个到6个#来表达标题大小</p>
-
-<pre><code>####标题
-</code></pre>
-
-<p>2.水平线<br/>
-由3个或者以上-或者*组成</p>
-
-<pre><code>----
-****
-</code></pre>
-
-<p>3.换行由2个以上空格组成</p>
-
-<p>4.段落分割使用空行</p>
-
-<p>5.关于有序列表和无序列表</p>
-
-<h6>有序列表</h6>
-
-<p>在列表前加入数字，之后加一个英文句点，在加一个空格</p>
-
-<pre><code>1. 项目１
-2. 项目２
-3. 项目３
-</code></pre>
-
-<h6>无序列表</h6>
-
-<p>在列表前添加*,+或者-,并在之后加1空格</p>
-
-<pre><code>* 项目 1
-+ 项目 2
-- 项目 3
-</code></pre>
-
-<h6>列表缩排</h6>
-
-<p>子项目用tab键缩进</p>
-
-<pre><code>1. 项目1
-    + 分项1
-    - 分项2
-    * 分项3
-2. 项目2
-    + 分项4
-    - 分项5
-    * 分项6
-3. 项目3
-</code></pre>
-
-<hr />
-
-<h4>链接和图片</h4>
-
-<p>1.文本中插入超连接</p>
-
-<pre><code>&lt;http://myblog.org&gt;
-</code></pre>
-
-<p>或者为文字添加连接，及注释</p>
-
-<pre><code>[mytext](http://myblog.org "我是注释")
-</code></pre>
-
-<p>2.插入图片</p>
-
-<pre><code>![我的图片](http://我的图片url "我是注释")
-</code></pre>
-
-<hr />
-
-<h4>引用和代码插入</h4>
-
-<p>1.使用>开头能够引用一段文本,在引用中能够使用markdown的语法</p>
-
-<pre><code>&gt; ___这里是引用文本部分___
-&gt;&gt; 子引用
-</code></pre>
-
-<p>2.有两种方式来插入代码，将代码用`符号包围或者每行要插入的代码文本之前加个tab
-<code>perl -e 'print "i love perl"'</code></p>
-
-<pre><code>perl -e 'print "i love perl"'
-</code></pre>
-
-<hr />
-
-<h4>字体</h4>
-
-<h6>粗体</h6>
-
-<pre><code>__文本__
-**文本**
-</code></pre>
-
-<h6>斜体</h6>
-
-<pre><code>_文本_
-*文本*
-</code></pre>
-
-<h6>粗斜体</h6>
-
-<pre><code>___文本___
-***文本***
-</code></pre>
 </div>
-  
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -332,10 +126,6 @@ POWER(2, CEILING( LOG(2,N) ) )
     
       <li class="post">
         <a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/guan-yu-mysqlfen-qu/">关于mysql分区</a>
       </li>
     
       <li class="post">
@@ -352,6 +142,7 @@ POWER(2, CEILING( LOG(2,N) ) )
 
   
 </aside>
+
 
     </div>
   </div>

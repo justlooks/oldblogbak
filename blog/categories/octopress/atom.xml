@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Strawhouse]]></title>
   <link href="http://justlooks.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-07T06:41:17+00:00</updated>
+  <updated>2012-06-07T06:53:27+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -60,6 +60,9 @@
 + 项目 2
 - 项目 3
 </code></pre>
+
+<!-- more -->
+
 
 <h6>列表缩排</h6>
 
