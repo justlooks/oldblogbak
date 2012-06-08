@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "修改导航栏"
+title: "Configure octopress outlook"
 date: 2012-06-07 07:38
 comments: true
 categories: octopress
@@ -50,4 +50,16 @@ mission two:添加一个twitter侧栏
 
 然后更新
 	# rake generate
-	# rake deploy
+	# rake deploy 
+
+
+----
+
+mission three: 修改字体
+
+在google web font中选择一种
+编辑source/_includes/custom/head.html文件,添加代码
+	<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+然后刷新浏览器缓存,就可以看到效果了
+

@@ -1,0 +1,20 @@
+---
+layout: post
+title: "test"
+date: 2012-06-07 09:23
+comments: true
+categories: 
+---
+
+内嵌代码
+{% codeblock perl's "hello world" lang:perl %}
+perl -e 'print "hello world\n"'
+{% endcodeblock %}
+<!--more-->
+内嵌gist tag
+{% gist 2894455 %}
+内嵌摘要
+{% pullquote %}
+Surround your paragraph with the pull quote tags. Then when you come to
+the text you want to pull, {" surround it like this "} and that's all there is to it.
+{% endpullquote %}
