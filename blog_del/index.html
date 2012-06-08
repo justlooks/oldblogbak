@@ -10,7 +10,7 @@
 
   
   <meta name="description" content="test perl&#8217;s &#8220;hello world&#8221; 1
-perl -e &#39;print &quot;hello world\n&quot;&#39; ">
+perl -e &#39;print &quot;hello world\n&quot;&#39; @@ -590,7 +590,7 @@ class SpritesTest &lt; Test::Unit &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -103,6 +103,19 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<div><script src='https://gist.github.com/996818.js?file='></script>
+<noscript><pre><code>@@ -590,7 +590,7 @@ class SpritesTest &lt; Test::Unit::TestCase
+  it &quot;should generate a sprite from nested folders&quot; do
+    css = render &lt;&lt;-SCSS
+-     @import &quot;nested/*.png&quot;;
++     @import &quot;nested/**/*.png&quot;;
+      @include all-nested-sprites;
+    SCSS
+    assert_correct css, &lt;&lt;-CSS</code></pre></noscript></div>
 
 
 
