@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-08T08:24:37+00:00</updated>
+  <updated>2012-06-08T08:29:51+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -18,7 +18,7 @@
     <link href="http://justlooks.github.com/blog/2012/06/07/test/"/>
     <updated>2012-06-07T09:23:00+00:00</updated>
     <id>http://justlooks.github.com/blog/2012/06/07/test</id>
-    <content type="html"><![CDATA[<p>test</p>
+    <content type="html"><![CDATA[<p>内嵌代码</p>
 
 <figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -26,13 +26,16 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p>内嵌gist tag</p>
 
 <div><script src='https://gist.github.com/2894455.js?file='></script>
 <noscript><pre><code>perl -e 'print &quot;hello world&quot;'</code></pre></noscript></div>
 
 
-
+<p><span class='pullquote-right' data-pullquote='surround it like this'>
+Surround your paragraph with the pull quote tags. Then when you come to
+the text you want to pull, surround it like this and that&#8217;s all there is to it.
+</span></p>
 ]]></content>
   </entry>
   
