@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-08T09:20:12+00:00</updated>
+  <updated>2012-06-08T09:23:17+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -81,6 +81,9 @@ the text you want to pull, surround it like this and that&#8217;s all there is t
 </code></pre>
 
 <p>这样的话更新就体现在github网站上了</p>
+
+<!-- more -->
+
 
 <hr />
 
