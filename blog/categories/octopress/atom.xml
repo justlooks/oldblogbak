@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Strawhouse]]></title>
   <link href="http://justlooks.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-08T09:14:11+00:00</updated>
+  <updated>2012-06-08T09:20:12+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -90,6 +90,27 @@
 </code></pre>
 
 <p>然后刷新浏览器缓存,就可以看到效果了</p>
+
+<hr />
+
+<p>mission four: 修改head字体及背景颜色</p>
+
+<p>利用http://hslpicker.com调配合适的颜色
+修改octopress/sass/custom/_colors.scss文件,添加</p>
+
+<pre><code>$header-bg: #464949;
+$title-color: #FFFFFF;
+$subtitle-color: #238B87;
+</code></pre>
+
+<p>然后</p>
+
+<pre><code># rake update_style
+# rake generate
+# rake deploy
+</code></pre>
+
+<p>就能看到变化了</p>
 ]]></content>
   </entry>
   
