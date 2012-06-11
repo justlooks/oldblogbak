@@ -9,8 +9,9 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="内嵌代码 perl&#8217;s &#8220;hello world&#8221; 1
-perl -e &#39;print &quot;hello world\n&quot;&#39; ">
+  <meta name="description" content="用git的版本管理来进行代码功能测试流程如下 需求 : 修改title及背景颜色 查看目前分支版本 &#8220;git command&#8221; 1
+$ git branch 本地创建分支 &#8220;git command&#8221; 1
+$ git checkout -b &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +69,125 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/11/guan-yu-wang-zhan-dai-ma-xiu-gai-liu-cheng/">关于网站代码修改流程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-11T13:00:00+00:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>用git的版本管理来进行代码功能测试流程如下</p>
+
+<hr />
+
+<h4>需求 : 修改title及背景颜色</h4>
+
+<ul>
+<li>查看目前分支版本</li>
+</ul>
+
+
+<figure class='code'><figcaption><span>&#8220;git command&#8221;  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git branch
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>本地创建分支</li>
+</ul>
+
+
+<figure class='code'><figcaption><span>&#8220;git command&#8221;  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git checkout -b modifytitlecolor
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><p>开始修改颜色,使用http://hslpicker.com 调配颜色,所有颜色定义在sass/base/<em>theme.scss文件中定义，修改sass/custom/</em>colors.scss来覆盖它</p></li>
+<li><p>修改并提交，检查确认修改内容</p></li>
+</ul>
+
+
+<figure class='code'><figcaption><span>&#8220;git command&#8221;  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git add .
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>git diff --cached
+</span><span class='line'>diff --git a/sass/custom/_colors.scss b/sass/custom/_colors.scss
+</span><span class='line'>index 740266a..408dd78 100644
+</span><span class='line'>--- a/sass/custom/_colors.scss
+</span><span class='line'>+++ b/sass/custom/_colors.scss
+</span><span class='line'>@@ -2,7 +2,9 @@
+</span><span class='line'> // To give it a try, uncomment some of the lines below rebuild your blog, and see how it works.
+</span><span class='line'> // If you need a handy color picker try http://hslpicker.com
+</span><span class='line'>
+</span><span class='line'>-//<span class="nv">$header</span>-bg: <span class="nv">$263347</span>;
+</span><span class='line'>+<span class="nv">$header</span>-bg: <span class="nv">$1B282C</span>;
+</span><span class='line'>+<span class="nv">$title</span>-color: <span class="nv">$FFFFFF</span>;
+</span><span class='line'>+<span class="nv">$subtitle</span>-color: <span class="nv">$E45807</span>;
+</span><span class='line'> //<span class="nv">$subtitle</span>-color: lighten<span class="o">(</span><span class="nv">$header</span>-bg, 58<span class="o">)</span>;
+</span><span class='line'> //<span class="nv">$nav</span>-bg: desaturate<span class="o">(</span>lighten<span class="o">(</span><span class="nv">$8fc17a</span>, 18<span class="o">)</span>, 5<span class="o">)</span>;
+</span><span class='line'> //<span class="nv">$nav</span>-bg-front: image-url<span class="o">(</span><span class="s1">&#39;noise.png&#39;</span><span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>git commit -m <span class="s2">&quot;title color change&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/06/11/guan-yu-wang-zhan-dai-ma-xiu-gai-liu-cheng/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -365,6 +485,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/06/11/guan-yu-wang-zhan-dai-ma-xiu-gai-liu-cheng/">关于网站代码修改流程</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/06/07/test/">test</a>
