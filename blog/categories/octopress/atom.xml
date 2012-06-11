@@ -4,118 +4,14 @@
   <title><![CDATA[Category: octopress | Strawhouse]]></title>
   <link href="http://justlooks.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-08T09:23:17+00:00</updated>
+  <updated>2012-06-11T07:37:05+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
-    <name><![CDATA[justlooks]]></name>
+    <name><![CDATA[Your Name]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[Configure octopress outlook]]></title>
-    <link href="http://justlooks.github.com/blog/2012/06/07/xiu-gai-dao-hang-lan/"/>
-    <updated>2012-06-07T07:38:00+00:00</updated>
-    <id>http://justlooks.github.com/blog/2012/06/07/xiu-gai-dao-hang-lan</id>
-    <content type="html"><![CDATA[<p>mission one:需要在页面增加一个新的page,比如about</p>
-
-<hr />
-
-<p>首先生成source目录下的about目录,以及内容</p>
-
-<pre><code># rake new_page["about/about.html"]
-# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
-</code></pre>
-
-<p>接着修改导航栏添加到about.html页面的导航</p>
-
-<pre><code># cd octopress/source/_includes/custom
-# vi navigation.html
-</code></pre>
-
-<p>添加如下代码</p>
-
-<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
-</code></pre>
-
-<p>这样在导航栏就有了about页面的导航选项了</p>
-
-<p>需要更新下修改后的octopress代码</p>
-
-<pre><code># rake update_source
-# rake generate
-# rake deploy
-</code></pre>
-
-<p>这样的话更新就体现在github网站上了</p>
-
-<!-- more -->
-
-
-<hr />
-
-<p>mission two:添加一个twitter侧栏</p>
-
-<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
-
-<pre><code># cd octopress
-# git pull octopress master
-# bundle install
-# rake update_source
-# rake update_style
-</code></pre>
-
-<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
-
-<pre><code># cp source/_includes/asides source/_includes/custom/asides
-</code></pre>
-
-<p>编辑_config.yml文件,添加下列文本为</p>
-
-<pre><code>page_asides: [custom/asides/twitter.html]
-</code></pre>
-
-<p>然后更新</p>
-
-<pre><code># rake generate
-# rake deploy 
-</code></pre>
-
-<hr />
-
-<p>mission three: 修改字体</p>
-
-<p>在google web font中选择一种
-编辑source/_includes/custom/head.html文件,添加代码</p>
-
-<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
-</code></pre>
-
-<p>然后刷新浏览器缓存,就可以看到效果了</p>
-
-<hr />
-
-<p>mission four: 修改head字体及背景颜色</p>
-
-<p>利用http://hslpicker.com调配合适的颜色
-修改octopress/sass/custom/_colors.scss文件,添加</p>
-
-<pre><code>$header-bg: #464949;
-$title-color: #FFFFFF;
-$subtitle-color: #238B87;
-</code></pre>
-
-<p>然后</p>
-
-<pre><code># rake update_style
-# rake generate
-# rake deploy
-</code></pre>
-
-<p>就能看到变化了</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于markdown的使用]]></title>

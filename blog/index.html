@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Strawhouse</title>
-  <meta name="author" content="justlooks">
+  <title>blog - Strawhouse</title>
+  <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="内嵌代码 perl&#8217;s &#8220;hello world&#8221; 1
-perl -e &#39;print &quot;hello world\n&quot;&#39; ">
+  <meta name="description" content=" Blog Jun 7th, 2012 Jun 7th, 2012 Recent Posts test tags podcast for oursql 如何更换octpress主题 关于markdown的使用 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/">
+  <link rel="canonical" href="http://justlooks.github.com/blog">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -30,7 +29,6 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 -->
-<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
 
   
 
@@ -40,7 +38,7 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
   <header role="banner"><hgroup>
   <h1><a href="/">Strawhouse</a></h1>
   
-    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+    <h2>记录工作点滴</h2>
   
 </hgroup>
 
@@ -58,27 +56,19 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/blog">Blog</a></li>
-  <li><a href="/blog/archives/index.html">Archives</a></li>
-  <li><a href="/about/about.html">About</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
 
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article role="article">
   
-  
-  
-    <article>
-      
   <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/test/">Test</a></h1>
-    
-    
-      <p class="meta">
-        
+    <h1 class="entry-title">Blog</h1>
+    <p class="meta">
 
 
 
@@ -90,44 +80,16 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
   
 
 
-<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
+<time datetime="2012-06-07T06:46:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time></p>
   </header>
-
-
-  <div class="entry-content"><p>内嵌代码</p>
-
-<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
   
+  
+
   
     <footer>
-      <a rel="full-article" href="/blog/2012/06/07/test/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure Octopress Outlook</a></h1>
-    
-    
       <p class="meta">
         
+        
 
 
 
@@ -139,191 +101,23 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
   
 
 
-<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+<time datetime="2012-06-07T06:46:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
         
       </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
-
-<hr />
-
-<p>首先生成source目录下的about目录,以及内容</p>
-
-<pre><code># rake new_page["about/about.html"]
-# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
-</code></pre>
-
-<p>接着修改导航栏添加到about.html页面的导航</p>
-
-<pre><code># cd octopress/source/_includes/custom
-# vi navigation.html
-</code></pre>
-
-<p>添加如下代码</p>
-
-<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
-</code></pre>
-
-<p>这样在导航栏就有了about页面的导航选项了</p>
-
-<p>需要更新下修改后的octopress代码</p>
-
-<pre><code># rake update_source
-# rake generate
-# rake deploy
-</code></pre>
-
-<p>这样的话更新就体现在github网站上了</p>
-
+      
+        <div class="sharing">
+  
+  
+  
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Read on &rarr;</a>
+
+      
     </footer>
   
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-07T06:12:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Octopress在2.0之后添加了source/_includes/custom目录</p>
-
-<blockquote><p>source/</p>
-
-<pre><code>_includes/   #关于布局的目录
-   custom/   # 这个目录可以调整页面头部,导航栏,页脚以及边栏
-   asides/   # 这个目录关于主题边栏部分
-   post/     # 这个目录关于帖子的元数据,分享以及评论部分
-_layouts/    # 这个目录关于页面布局,帖子以及类型归档等
-</code></pre>
-
-<p>mv index.html blog/index.html</p></blockquote>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/14/for-test/">关于markdown的使用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-14T07:35:00+00:00" pubdate data-updated="true">May 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下</p>
-
-<hr />
-
-<h4>文本格式</h4>
-
-<p>1.标题<br/>
-可以用1个到6个#来表达标题大小</p>
-
-<pre><code>####标题
-</code></pre>
-
-<p>2.水平线<br/>
-由3个或者以上-或者*组成</p>
-
-<pre><code>----
-****
-</code></pre>
-
-<p>3.换行由2个以上空格组成</p>
-
-<p>4.段落分割使用空行</p>
-
-<p>5.关于有序列表和无序列表</p>
-
-<h6>有序列表</h6>
-
-<p>在列表前加入数字，之后加一个英文句点，在加一个空格</p>
-
-<pre><code>1. 项目１
-2. 项目２
-3. 项目３
-</code></pre>
-
-<h6>无序列表</h6>
-
-<p>在列表前添加*,+或者-,并在之后加1空格</p>
-
-<pre><code>* 项目 1
-+ 项目 2
-- 项目 3
-</code></pre>
+</article>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/14/for-test/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -331,11 +125,11 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2012/06/07/test/">test</a>
+        <a href="/blog/2012/06/11/test-tags/">test tags</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure octopress outlook</a>
+        <a href="/blog/2012/06/10/podcast-for-oursql/">podcast for oursql</a>
       </li>
     
       <li class="post">
@@ -350,22 +144,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 </section>
 
 
-<section>
-  <h1>Latest Tweets</h1>
-  <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("justlooks", 4, false);
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
-  
-    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
-  
-</section>
-
 
 
 
@@ -373,10 +151,11 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - justlooks -
+  Copyright &copy; 2012 - Your Name -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -388,16 +167,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 
 
 
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
 
 
 
