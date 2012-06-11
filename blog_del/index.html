@@ -6,11 +6,11 @@
 <head>
   <meta charset="utf-8">
   <title>Strawhouse</title>
-  <meta name="author" content="Your Name">
+  <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="for test tag
-">
+  <meta name="description" content="内嵌代码 perl&#8217;s &#8220;hello world&#8221; 1
+perl -e &#39;print &quot;hello world\n&quot;&#39; ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog_del">
+  <link rel="canonical" href="http://justlooks.github.com/blog_del/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -30,6 +30,7 @@
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 -->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
 
   
 
@@ -39,7 +40,7 @@
   <header role="banner"><hgroup>
   <h1><a href="/">Strawhouse</a></h1>
   
-    <h2>记录工作点滴</h2>
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
   
 </hgroup>
 
@@ -57,8 +58,9 @@
 </form>
   
 <ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
 </ul>
 
 </nav>
@@ -72,7 +74,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/06/11/test-tags/">Test Tags</a></h1>
+      <h1 class="entry-title"><a href="/blog/2012/06/07/test/">Test</a></h1>
     
     
       <p class="meta">
@@ -88,16 +90,29 @@
   
 
 
-<time datetime="2012-06-11T02:26:00+00:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
+<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>for test tag</p>
+  <div class="entry-content"><p>内嵌代码</p>
+
+<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/06/07/test/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -108,7 +123,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/06/10/podcast-for-oursql/">Podcast for Oursql</a></h1>
+      <h1 class="entry-title"><a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure Octopress Outlook</a></h1>
     
     
       <p class="meta">
@@ -124,15 +139,85 @@
   
 
 
-<time datetime="2012-06-10T12:38:00+00:00" pubdate data-updated="true">Jun 10<span>th</span>, 2012</time>
+<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Episode 94: It&#8217;s Still Not Our Type, Part 3
-<video width='' height='' preload='none' controls poster=''><source src='http://technocation.org/audio/download/1166/OurSQL_Episode_094.mp3' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/></video></p>
+  <div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
+
+<hr />
+
+<p>首先生成source目录下的about目录,以及内容</p>
+
+<pre><code># rake new_page["about/about.html"]
+# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
+</code></pre>
+
+<p>接着修改导航栏添加到about.html页面的导航</p>
+
+<pre><code># cd octopress/source/_includes/custom
+# vi navigation.html
+</code></pre>
+
+<p>添加如下代码</p>
+
+<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<p>这样在导航栏就有了about页面的导航选项了</p>
+
+<p>需要更新下修改后的octopress代码</p>
+
+<pre><code># rake update_source
+# rake generate
+# rake deploy
+</code></pre>
+
+<p>这样的话更新就体现在github网站上了</p>
+
+<hr />
+
+<p>mission two:添加一个twitter侧栏</p>
+
+<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
+
+<pre><code># cd octopress
+# git pull octopress master
+# bundle install
+# rake update_source
+# rake update_style
+</code></pre>
+
+<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
+
+<pre><code># cp source/_includes/asides source/_includes/custom/asides
+</code></pre>
+
+<p>编辑_config.yml文件,添加下列文本为</p>
+
+<pre><code>page_asides: [custom/asides/twitter.html]
+</code></pre>
+
+<p>然后更新</p>
+
+<pre><code># rake generate
+# rake deploy 
+</code></pre>
+
+<hr />
+
+<p>mission three: 修改字体</p>
+
+<p>在google web font中选择一种
+编辑source/_includes/custom/head.html文件,添加代码</p>
+
+<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
+</code></pre>
+
+<p>然后刷新浏览器缓存,就可以看到效果了</p>
 </div>
   
   
@@ -282,11 +367,11 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2012/06/11/test-tags/">test tags</a>
+        <a href="/blog/2012/06/07/test/">test</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2012/06/10/podcast-for-oursql/">podcast for oursql</a>
+        <a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure octopress outlook</a>
       </li>
     
       <li class="post">
@@ -301,6 +386,22 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 </section>
 
 
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
 
 
 
@@ -311,7 +412,7 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Your Name -
+  Copyright &copy; 2012 - justlooks -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -323,6 +424,16 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 
 
 
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
 
 
 

@@ -4,31 +4,124 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-06-11T07:37:05+00:00</updated>
+  <updated>2012-06-11T08:19:12+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[justlooks]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
-    <title type="html"><![CDATA[test tags]]></title>
-    <link href="http://justlooks.github.com/blog/2012/06/11/test-tags/"/>
-    <updated>2012-06-11T02:26:00+00:00</updated>
-    <id>http://justlooks.github.com/blog/2012/06/11/test-tags</id>
-    <content type="html"><![CDATA[<p>for test tag</p>
+    <title type="html"><![CDATA[test]]></title>
+    <link href="http://justlooks.github.com/blog/2012/06/07/test/"/>
+    <updated>2012-06-07T09:23:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/06/07/test</id>
+    <content type="html"><![CDATA[<p>内嵌代码</p>
+
+<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!--more-->
+
+
+<p>内嵌gist tag</p>
+
+<div><script src='https://gist.github.com/2894455.js?file='></script>
+<noscript><pre><code>perl -e 'print &quot;hello world&quot;'</code></pre></noscript></div>
+
+
+<p>内嵌摘要
+<span class='pullquote-right' data-pullquote='surround it like this'>
+Surround your paragraph with the pull quote tags. Then when you come to
+the text you want to pull, surround it like this and that&#8217;s all there is to it.
+</span></p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[podcast for oursql]]></title>
-    <link href="http://justlooks.github.com/blog/2012/06/10/podcast-for-oursql/"/>
-    <updated>2012-06-10T12:38:00+00:00</updated>
-    <id>http://justlooks.github.com/blog/2012/06/10/podcast-for-oursql</id>
-    <content type="html"><![CDATA[<p>Episode 94: It&#8217;s Still Not Our Type, Part 3
-<video width='' height='' preload='none' controls poster=''><source src='http://technocation.org/audio/download/1166/OurSQL_Episode_094.mp3' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/></video></p>
+    <title type="html"><![CDATA[Configure octopress outlook]]></title>
+    <link href="http://justlooks.github.com/blog/2012/06/07/xiu-gai-dao-hang-lan/"/>
+    <updated>2012-06-07T07:38:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/06/07/xiu-gai-dao-hang-lan</id>
+    <content type="html"><![CDATA[<p>mission one:需要在页面增加一个新的page,比如about</p>
+
+<hr />
+
+<p>首先生成source目录下的about目录,以及内容</p>
+
+<pre><code># rake new_page["about/about.html"]
+# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
+</code></pre>
+
+<p>接着修改导航栏添加到about.html页面的导航</p>
+
+<pre><code># cd octopress/source/_includes/custom
+# vi navigation.html
+</code></pre>
+
+<p>添加如下代码</p>
+
+<pre><code>&lt;li&gt;&lt;a href="http://justlooks.github.com/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<p>这样在导航栏就有了about页面的导航选项了</p>
+
+<p>需要更新下修改后的octopress代码</p>
+
+<pre><code># rake update_source
+# rake generate
+# rake deploy
+</code></pre>
+
+<p>这样的话更新就体现在github网站上了</p>
+
+<hr />
+
+<p>mission two:添加一个twitter侧栏</p>
+
+<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
+
+<pre><code># cd octopress
+# git pull octopress master
+# bundle install
+# rake update_source
+# rake update_style
+</code></pre>
+
+<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
+
+<pre><code># cp source/_includes/asides source/_includes/custom/asides
+</code></pre>
+
+<p>编辑_config.yml文件,添加下列文本为</p>
+
+<pre><code>page_asides: [custom/asides/twitter.html]
+</code></pre>
+
+<p>然后更新</p>
+
+<pre><code># rake generate
+# rake deploy 
+</code></pre>
+
+<hr />
+
+<p>mission three: 修改字体</p>
+
+<p>在google web font中选择一种
+编辑source/_includes/custom/head.html文件,添加代码</p>
+
+<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
+</code></pre>
+
+<p>然后刷新浏览器缓存,就可以看到效果了</p>
 ]]></content>
   </entry>
   
