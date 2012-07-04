@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Strawhouse</title>
+  <title>mutt配置 - Strawhouse</title>
   <meta name="author" content="justlooks">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog_del/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/07/03/muttpei-zhi/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -65,15 +65,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/07/03/muttpei-zhi/">Mutt配置</a></h1>
+      <h1 class="entry-title">Mutt配置</h1>
     
     
       <p class="meta">
@@ -96,7 +93,7 @@
   </header>
 
 
-  <div class="entry-content"><h2>1. 首先配置getmail收信  </h2>
+<div class="entry-content"><h2>1. 首先配置getmail收信  </h2>
 
 <p>安装getmail4</p>
 
@@ -409,71 +406,16 @@ vi ~/.muttrc
 
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/test/">Test</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
 
-<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>内嵌代码</p>
-
-<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/06/07/test/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure Octopress Outlook</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -485,227 +427,32 @@ vi ~/.muttrc
   
 
 
-<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
-
-<hr />
-
-<p>首先生成source目录下的about目录,以及内容</p>
-
-<pre><code># rake new_page["about/about.html"]
-# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
-</code></pre>
-
-<p>接着修改导航栏添加到about.html页面的导航</p>
-
-<pre><code># cd octopress/source/_includes/custom
-# vi navigation.html
-</code></pre>
-
-<p>添加如下代码</p>
-
-<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
-</code></pre>
-
-<p>这样在导航栏就有了about页面的导航选项了</p>
-
-<p>需要更新下修改后的octopress代码</p>
-
-<pre><code># rake update_source
-# rake generate
-# rake deploy
-</code></pre>
-
-<p>这样的话更新就体现在github网站上了</p>
-
-<hr />
-
-<p>mission two:添加一个twitter侧栏</p>
-
-<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
-
-<pre><code># cd octopress
-# git pull octopress master
-# bundle install
-# rake update_source
-# rake update_style
-</code></pre>
-
-<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
-
-<pre><code># cp source/_includes/asides source/_includes/custom/asides
-</code></pre>
-
-<p>编辑_config.yml文件,添加下列文本为</p>
-
-<pre><code>page_asides: [custom/asides/twitter.html]
-</code></pre>
-
-<p>然后更新</p>
-
-<pre><code># rake generate
-# rake deploy 
-</code></pre>
-
-<hr />
-
-<p>mission three: 修改字体</p>
-
-<p>在google web font中选择一种
-编辑source/_includes/custom/head.html文件,添加代码</p>
-
-<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
-</code></pre>
-
-<p>然后刷新浏览器缓存,就可以看到效果了</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2012-07-03T05:54:00+00:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2012</time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/">如何更换octpress主题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+      <div class="sharing">
   
-
-
-<time datetime="2012-06-07T06:12:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Octopress在2.0之后添加了source/_includes/custom目录</p>
-
-<blockquote><p>source/</p>
-
-<pre><code>_includes/   #关于布局的目录
-   custom/   # 这个目录可以调整页面头部,导航栏,页脚以及边栏
-   asides/   # 这个目录关于主题边栏部分
-   post/     # 这个目录关于帖子的元数据,分享以及评论部分
-_layouts/    # 这个目录关于页面布局,帖子以及类型归档等
-</code></pre>
-
-<p>mv index.html blog/index.html</p></blockquote>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/07/03/muttpei-zhi/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/07/03/muttpei-zhi/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/14/for-test/">关于markdown的使用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-14T07:35:00+00:00" pubdate data-updated="true">May 14<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下</p>
-
-<hr />
-
-<h4>文本格式</h4>
-
-<p>1.标题<br/>
-可以用1个到6个#来表达标题大小</p>
-
-<pre><code>####标题
-</code></pre>
-
-<p>2.水平线<br/>
-由3个或者以上-或者*组成</p>
-
-<pre><code>----
-****
-</code></pre>
-
-<p>3.换行由2个以上空格组成</p>
-
-<p>4.段落分割使用空行</p>
-
-<p>5.关于有序列表和无序列表</p>
-
-<h6>有序列表</h6>
-
-<p>在列表前加入数字，之后加一个英文句点，在加一个空格</p>
-
-<pre><code>1. 项目１
-2. 项目２
-3. 项目３
-</code></pre>
-
-<h6>无序列表</h6>
-
-<p>在列表前添加*,+或者-,并在之后加1空格</p>
-
-<pre><code>* 项目 1
-+ 项目 2
-- 项目 3
-</code></pre>
+        <a class="basic-alignment left" href="/blog/2012/06/07/test/" title="Previous Post: test">&laquo; test</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/14/for-test/">Read on &rarr;</a>
-    </footer>
-  
 
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -739,7 +486,7 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -758,6 +505,7 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 
   
 </aside>
+
 
     </div>
   </div>
