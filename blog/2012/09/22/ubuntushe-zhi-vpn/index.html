@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ubuntu设置vpn - Strawhouse</title>
+  <meta name="author" content="justlooks">
+
+  
+  <meta name="description" content="首先安装vpn软件 # apt-get install pptpd 编辑文件 content of /etc/pptpd.conf 1
+2
+localip 192.168.0.1
+remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Strawhouse" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts 
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Strawhouse</a></h1>
+  
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:justlooks.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Ubuntu设置vpn</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>首先安装vpn软件</p>
+
+<pre><code># apt-get install pptpd
+</code></pre>
+
+<p>编辑文件</p>
+
+<figure class='code'><figcaption><span>content of /etc/pptpd.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>localip 192.168.0.1
+</span><span class='line'>remoteip 192.168.0.234-238,192.168.0.245
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>content of /etc/ppp/chap-secrets  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>username pptpd   password     *
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>content of /etc/ppp/pptpd-options  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ms-dns 8.8.8.8
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打开转发</p>
+
+<figure class='code'><figcaption><span>content of /etc/sysctl.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>net.ipv4.ip_forward<span class="o">=</span>1
+</span><span class='line'>net.ipv6.conf.all.forwarding<span class="o">=</span>1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>并使其生效</p>
+
+<pre><code># sysctl -p
+</code></pre>
+
+<p>配置ufw</p>
+
+<figure class='code'><figcaption><span>content of /etc/default/ufw  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#DEFAULT_FORWARD_POLICY=&quot;DROP&quot;</span>
+</span><span class='line'><span class="nv">DEFAULT_FORWARD_POLICY</span><span class="o">=</span><span class="s2">&quot;ACCEPT&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在开头注释下紧接下列内容</p>
+
+<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>*nat
+</span><span class='line'>:POSTROUTING ACCEPT <span class="o">[</span>0:0<span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+</span><span class='line'>
+</span><span class='line'>COMMIT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在filter section下加入如下内容</p>
+
+<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>-A ufw-before-input -i ppp+ -j ACCEPT
+</span><span class='line'>-A ufw-before-output -i ppp+ -j ACCEPT
+</span><span class='line'>-A ufw-before-forward -s 192.168.0.0/24 -j ACCEPT
+</span><span class='line'>-A ufw-before-forward -d 192.168.0.0/24 -j ACCEPT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后重新启动ufw并且启动pptpd服务</p>
+
+<pre><code># ufw disable &amp;&amp; ufw enable
+# /etc/init.d/pptpd start
+</code></pre>
+
+<p>测试能够正常连接</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/07/05/shi-yong-mutt/" title="Previous Post: 使用mutt">&laquo; 使用mutt</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/05/shi-yong-mutt/">使用mutt</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/04/muttpei-zhi-shi-yong-gpg/">mutt配置使用gpg</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/04/ru-he-shi-yong-gnupg/">如何使用GnuPG</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/03/muttpei-zhi/">mutt配置</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - justlooks -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
