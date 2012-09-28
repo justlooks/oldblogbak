@@ -5,14 +5,26 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>ubuntu设置vpn - Strawhouse</title>
+  <title>关于oracle instance启动的理解 - Strawhouse</title>
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="首先安装vpn软件 # apt-get install pptpd 编辑文件 content of /etc/pptpd.conf 1
+  <meta name="description" content="instance 的启动为 nomount选项,这时还没有关联数据库,但是SGA和后台进程启动 content of rc-gmail 1
 2
-localip 192.168.0.1
-remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+$ sqlplus / as sysdba
+SQL&gt; host ps -ef|grep [ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +33,7 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -73,7 +85,7 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Ubuntu设置vpn</h1>
+      <h1 class="entry-title">关于oracle Instance启动的理解</h1>
     
     
       <p class="meta">
@@ -89,108 +101,92 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
   
 
 
-<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+<time datetime="2012-09-28T07:26:00+00:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>首先安装vpn软件</p>
+<div class="entry-content"><p>instance 的启动为 nomount选项,这时还没有关联数据库,但是SGA和后台进程启动</p>
 
-<pre><code># apt-get install pptpd
-</code></pre>
-
-<p>编辑文件</p>
-
-<figure class='code'><figcaption><span>content of /etc/pptpd.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>localip 192.168.0.1
-</span><span class='line'>remoteip 192.168.0.234-238,192.168.0.245
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>content of /etc/ppp/chap-secrets  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>username pptpd   password     *
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>content of /etc/ppp/pptpd-options  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ms-dns 8.8.8.8
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打开转发</p>
-
-<figure class='code'><figcaption><span>content of /etc/sysctl.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>net.ipv4.ip_forward<span class="o">=</span>1
-</span><span class='line'>net.ipv6.conf.all.forwarding<span class="o">=</span>1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>并使其生效</p>
-
-<pre><code># sysctl -p
-</code></pre>
-
-<p>配置ufw</p>
-
-<figure class='code'><figcaption><span>content of /etc/default/ufw  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#DEFAULT_FORWARD_POLICY=&quot;DROP&quot;</span>
-</span><span class='line'><span class="nv">DEFAULT_FORWARD_POLICY</span><span class="o">=</span><span class="s2">&quot;ACCEPT&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在开头注释下紧接下列内容</p>
-
-<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+<figure class='code'><figcaption><span>content of rc-gmail  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*nat
-</span><span class='line'>:POSTROUTING ACCEPT <span class="o">[</span>0:0<span class="o">]</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sqlplus / as sysdba
+</span><span class='line'>SQL&gt; host ps -ef|grep <span class="o">[</span>p<span class="o">]</span>mon
 </span><span class='line'>
-</span><span class='line'>-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+</span><span class='line'>SQL&gt; startup nomount
+</span><span class='line'>ORACLE instance started.
 </span><span class='line'>
-</span><span class='line'>COMMIT
+</span><span class='line'>Total System Global Area  392568832 bytes
+</span><span class='line'>Fixed Size                  2213536 bytes
+</span><span class='line'>Variable Size             327158112 bytes
+</span><span class='line'>Database Buffers           50331648 bytes
+</span><span class='line'>Redo Buffers               12865536 bytes
+</span><span class='line'>
+</span><span class='line'>SQL&gt; host ps -ef|grep <span class="o">[</span>p<span class="o">]</span>mon
+</span><span class='line'>oracle    8801     1  0 16:05 ?        00:00:00 ora_pmon_mynewdb
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>然后在filter section下加入如下内容</p>
+<p>mount选项使instance和database相关联,示例读取control file,而其他文件都没有被打开</p>
 
-<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+<figure class='code'><figcaption><span>content of rc-gmail  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>-A ufw-before-input -i ppp+ -j ACCEPT
-</span><span class='line'>-A ufw-before-output -i ppp+ -j ACCEPT
-</span><span class='line'>-A ufw-before-forward -s 192.168.0.0/24 -j ACCEPT
-</span><span class='line'>-A ufw-before-forward -d 192.168.0.0/24 -j ACCEPT
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; alter database mount;
+</span><span class='line'>
+</span><span class='line'>Database altered.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>fuser -u /data/app/oracle/flash_recovery_area/mynewdb/control02.ctl
+</span><span class='line'>/data/app/oracle/flash_recovery_area/mynewdb/control02.ctl:  8835<span class="o">(</span>oracle<span class="o">)</span>  8839<span class="o">(</span>oracle<span class="o">)</span>  8843<span class="o">(</span>oracle<span class="o">)</span>  8870<span class="o">(</span>oracle<span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>最后重新启动ufw并且启动pptpd服务</p>
+<p>在使用open选项后,instance打开数据文件和redo log文件</p>
 
-<pre><code># ufw disable &amp;&amp; ufw enable
-# /etc/init.d/pptpd start
-</code></pre>
+<figure class='code'><figcaption><span>content of rc-gmail  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>fuser -u redo01.log
+</span><span class='line'><span class="nv">$ </span>fuser -u users01.dbf
+</span><span class='line'>
+</span><span class='line'>SQL&gt; alter database open;
+</span><span class='line'>
+</span><span class='line'>tabase altered.
+</span><span class='line'>
+</span><span class='line'>users01.dbf:          8835<span class="o">(</span>oracle<span class="o">)</span>  8839<span class="o">(</span>oracle<span class="o">)</span>  8847<span class="o">(</span>oracle<span class="o">)</span>  8870<span class="o">(</span>oracle<span class="o">)</span>
+</span><span class='line'><span class="nv">$ </span>fuser -u redo01.log
+</span><span class='line'>redo01.log:           8839<span class="o">(</span>oracle<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>测试能够正常连接</p>
+
+
 </div>
 
 
@@ -213,7 +209,7 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
   
 
 
-<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+<time datetime="2012-09-28T07:26:00+00:00" pubdate data-updated="true">Sep 28<span>th</span>, 2012</time>
       
 
 
@@ -221,7 +217,7 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/09/22/ubuntushe-zhi-vpn/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/" >Tweet</a>
   
   
   
@@ -230,10 +226,8 @@ remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/07/05/shi-yong-mutt/" title="Previous Post: 使用mutt">&laquo; 使用mutt</a>
+        <a class="basic-alignment left" href="/blog/2012/09/22/ubuntushe-zhi-vpn/" title="Previous Post: ubuntu设置vpn">&laquo; ubuntu设置vpn</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/" title="Next Post: 关于oracle instance启动的理解">关于oracle instance启动的理解 &raquo;</a>
       
     </p>
   </footer>
