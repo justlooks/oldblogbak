@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: oracle | Strawhouse]]></title>
+  <link href="http://justlooks.github.com/blog/categories/oracle/atom.xml" rel="self"/>
+  <link href="http://justlooks.github.com/"/>
+  <updated>2012-10-17T02:21:15+00:00</updated>
+  <id>http://justlooks.github.com/</id>
+  <author>
+    <name><![CDATA[justlooks]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[oracle备份恢复测试]]></title>
+    <link href="http://justlooks.github.com/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/"/>
+    <updated>2012-10-17T01:45:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi</id>
+    <content type="html"><![CDATA[<h2>1. 建立测试表</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>create test table  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;<span class="nv">$ </span>sqlplus hr/hr&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;SQL&gt; create table test_tbl<span class="o">(</span>id number<span class="o">)</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Table created.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;SQL&gt; insert into test_tbl values<span class="o">(</span>123<span class="o">)</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;1 row created.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;SQL&gt; commit;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Commit complete.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;SQL&gt; <span class="k">select</span> * from test_tbl;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    ID
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;   123
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>2. 使用RMAN建立数据库备份,打开自动备份设置</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>backup using RMAN  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rman target /&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Recovery Manager: Release 11.2.0.1.0 - Production on Wed Oct 17 09:06:24 2012&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle and/or its affiliates.  All rights reserved.&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;connected to target database: MYCATALO <span class="o">(</span><span class="nv">DBID</span><span class="o">=</span>3501650295<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; show controlfile autobackup;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;using target database control file instead of recovery catalog
+</span><span class='line'>RMAN configuration parameters <span class="k">for </span>database with db_unique_name MYCATALOG are:&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;CONFIGURE CONTROLFILE AUTOBACKUP OFF;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; configure CONTROLFILE AUTOBACKUP on;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;new RMAN configuration parameters:
+</span><span class='line'>CONFIGURE CONTROLFILE AUTOBACKUP ON;
+</span><span class='line'>new RMAN configuration parameters are successfully stored&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; show controlfile autobackup;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN configuration parameters <span class="k">for </span>database with db_unique_name MYCATALOG are:
+</span><span class='line'>CONFIGURE CONTROLFILE AUTOBACKUP ON;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; backup database plus archivelog;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>information of backupset  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; list backupset;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;List of Backup Sets&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;BS Key  Size       Device Type Elapsed Time Completion Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;9       90.57M     DISK        00:00:04     17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    BP Key: 9   Status: AVAILABLE  Compressed: NO  Tag: TAG20121017T090830
+</span><span class='line'>    Piece Name: +MYDG/mycatalog/backupset/2012_10_17/annnf0_tag20121017t090830_0.290.796900111
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  List of Archived Logs in backup <span class="nb">set </span>9
+</span><span class='line'>  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  1    74      2687498    16-OCT-12 2688412    16-OCT-12
+</span><span class='line'>  1    75      2688412    16-OCT-12 2688442    16-OCT-12
+</span><span class='line'>  1    76      2688442    16-OCT-12 2688642    16-OCT-12
+</span><span class='line'>  1    77      2688642    16-OCT-12 2688669    16-OCT-12
+</span><span class='line'>  1    78      2688669    16-OCT-12 2710156    16-OCT-12
+</span><span class='line'>  1    79      2710156    16-OCT-12 2717624    16-OCT-12
+</span><span class='line'>  1    80      2717624    16-OCT-12 2736334    17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;BS Key  Type LV Size       Device Type Elapsed Time Completion Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;10      Full    1.20G      DISK        00:00:47     17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    BP Key: 10   Status: AVAILABLE  Compressed: NO  Tag: TAG20121017T090834
+</span><span class='line'>    Piece Name: +MYDG/mycatalog/backupset/2012_10_17/nnndf0_tag20121017t090834_0.291.796900115
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  List of Datafiles in backup <span class="nb">set </span>10
+</span><span class='line'>  File LV Type Ckp SCN    Ckp Time  Name&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  1       Full 2736343    17-OCT-12 +MYDG/mycatalog/datafile/system.277.794511081
+</span><span class='line'>  2       Full 2736343    17-OCT-12 +MYDG/mycatalog/datafile/sysaux.276.794511081
+</span><span class='line'>  3       Full 2736343    17-OCT-12 +MYDG/mycatalog/datafile/undotbs1.289.794511081
+</span><span class='line'>  4       Full 2736343    17-OCT-12 +MYDG/mycatalog/datafile/users.288.794511081
+</span><span class='line'>  5       Full 2736343    17-OCT-12 +MYDG/mycatalog/datafile/ts_example.270.796474275&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;BS Key  Size       Device Type Elapsed Time Completion Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;11      5.00K      DISK        00:00:00     17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    BP Key: 11   Status: AVAILABLE  Compressed: NO  Tag: TAG20121017T090930
+</span><span class='line'>    Piece Name: +MYDG/mycatalog/backupset/2012_10_17/annnf0_tag20121017t090930_0.299.796900171
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  List of Archived Logs in backup <span class="nb">set </span>11
+</span><span class='line'>  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  1    81      2736334    17-OCT-12 2736366    17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;BS Key  Type LV Size       Device Type Elapsed Time Completion Time&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;12      Full    9.36M      DISK        00:00:01     17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    BP Key: 12   Status: AVAILABLE  Compressed: NO  Tag: TAG20121017T090931
+</span><span class='line'>    Piece Name: +MYDG/mycatalog/autobackup/2012_10_17/s_796900171.300.796900173
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;  SPFILE Included: Modification <span class="nb">time</span>: 16-OCT-12
+</span><span class='line'>  SPFILE db_unique_name: MYCATALOG
+</span><span class='line'>  Control File Included: Ckp SCN: 2736375      Ckp <span class="nb">time</span>: 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>3. 转移备份数据到恢复目标机</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>transform the backupset to destination  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;ASMCMD&gt; cp +MYDG/MYCATALOG/AUTOBACKUP/2012_10_17/s_796900171.300.796900173 sys@oracle01.1521.+ASM:+MYDG/RESCURE/s_796900171
+</span><span class='line'>ASMCMD&gt; cp +MYDG/MYCATALOG/BACKUPSET/2012_10_17/annnf0_TAG20121017T090830_0.290.796900111&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;sys@oracle01.1521.+ASM:+MYDG/RESCURE/annnf0_TAG20121017T090830_0
+</span><span class='line'>ASMCMD&gt; cp +MYDG/MYCATALOG/BACKUPSET/2012_10_17/annnf0_TAG20121017T090930_0.299.796900171&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;sys@oracle01.1521.+ASM:+MYDG/RESCURE/annnf0_TAG20121017T090930_0
+</span><span class='line'>ASMCMD&gt; cp +MYDG/MYCATALOG/BACKUPSET/2012_10_17/nnndf0_TAG20121017T090834_0.291.796900115&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;sys@oracle01.1521.+ASM:+MYDG/RESCURE/nnndf0_TAG20121017T090834_0&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;并确认收到备份数据&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;ASMCMD&gt; ls -l +MYDG/RESCURE/
+</span><span class='line'>Type        Redund  Striped  Time             Sys  Name&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;                                          N    <span class="nv">annnf0_TAG20121017T090830_0</span> <span class="o">=</span>&amp;gt;
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;+MYDG/ASM/BACKUPSET/annnf0_TAG20121017T090830_0.276.796899831&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;                                          N    <span class="nv">annnf0_TAG20121017T090930_0</span> <span class="o">=</span>&amp;gt;
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;+MYDG/ASM/BACKUPSET/annnf0_TAG20121017T090930_0.278.796899865&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;                                          N    <span class="nv">nnndf0_TAG20121017T090834_0</span> <span class="o">=</span>&amp;gt;
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;+MYDG/ASM/BACKUPSET/nnndf0_TAG20121017T090834_0.280.796899887&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;                                          N    <span class="nv">s_796900171</span> <span class="o">=</span>&amp;gt; +MYDG/ASM/AUTOBACKUP/s_796900171.277.796899745
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>4. 目标机上的恢复操作</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>recover spfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">export </span><span class="nv">ORACLE_SID</span><span class="o">=</span>mycatalog
+</span><span class='line'><span class="nv">$ </span>rman nocatalog
+</span><span class='line'>RMAN&gt; connect target /&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;connected to target database <span class="o">(</span>not started<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; <span class="nb">set </span>dbid 3501650295&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;executing <span class="nb">command</span>: SET DBID&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; startup nomount&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;startup failed: ORA-01078: failure in processing system parameters
+</span><span class='line'>LRM-00109: could not open parameter file <span class="s1">&#39;/opt/oracle/app/oracle/product/11.2.0/dbhome_1/dbs/initmycatalog.ora&#39;</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;starting Oracle instance without parameter file <span class="k">for </span>retrieval of spfile
+</span><span class='line'>Oracle instance started&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Total System Global Area     158662656 bytes&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Fixed Size                     2211448 bytes
+</span><span class='line'>Variable Size                 92275080 bytes
+</span><span class='line'>Database Buffers              58720256 bytes
+</span><span class='line'>Redo Buffers                   5455872 bytes&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt;  restore spfile to pfile <span class="s1">&#39;?/dbs/initmycatalog.ora&#39;</span> from <span class="s1">&#39;+MYDG/ASM/AUTOBACKUP/s_796900171.277.796899745&#39;</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting restore at 17-OCT-12
+</span><span class='line'>allocated channel: ORA_DISK_1
+</span><span class='line'>channel ORA_DISK_1: <span class="nv">SID</span><span class="o">=</span>67 device <span class="nb">type</span><span class="o">=</span>DISK&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;channel ORA_DISK_1: restoring spfile from AUTOBACKUP +MYDG/ASM/AUTOBACKUP/s_796900171.277.796899745
+</span><span class='line'>channel ORA_DISK_1: SPFILE restore from AUTOBACKUP <span class="nb">complete</span>
+</span><span class='line'>Finished restore at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; shutdown abort;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Oracle instance shut down&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这里可以对恢复出来的pfile做些必要的调整,由于目标机和原备份机环境一致,所以不做修改</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>recover control file  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>RMAN&gt; startup force nomount <span class="nv">pfile</span><span class="o">=</span><span class="s1">&#39;?/dbs/initmycatalog.ora&#39;</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Oracle instance started&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Total System Global Area     839282688 bytes&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Fixed Size                     2217992 bytes
+</span><span class='line'>Variable Size                721422328 bytes
+</span><span class='line'>Database Buffers             109051904 bytes
+</span><span class='line'>Redo Buffers                   6590464 bytes&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; restore controlfile from autobackup;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting restore at 17-OCT-12
+</span><span class='line'>allocated channel: ORA_DISK_1
+</span><span class='line'>channel ORA_DISK_1: <span class="nv">SID</span><span class="o">=</span>3 device <span class="nb">type</span><span class="o">=</span>DISK&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;recovery area destination: +MYDG
+</span><span class='line'>database name <span class="o">(</span>or database unique name<span class="o">)</span> used <span class="k">for </span>search: MYCATALOG
+</span><span class='line'>channel ORA_DISK_1: no AUTOBACKUPS found in the recovery area
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121017
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121016
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121015
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121014
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121013
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121012
+</span><span class='line'>channel ORA_DISK_1: looking <span class="k">for </span>AUTOBACKUP on day: 20121011
+</span><span class='line'>channel ORA_DISK_1: no AUTOBACKUP in 7 days found
+</span><span class='line'>RMAN-00571: <span class="o">===========================================================</span>
+</span><span class='line'>RMAN-00569: <span class="o">===============</span> ERROR MESSAGE STACK <span class="nv">FOLLOWS</span> <span class="o">===============</span>
+</span><span class='line'>RMAN-00571: <span class="o">===========================================================</span>
+</span><span class='line'>RMAN-03002: failure of restore <span class="nb">command </span>at 10/17/2012 09:19:50
+</span><span class='line'>RMAN-06172: no AUTOBACKUP found or specified handle is not a valid copy or piece&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;因为目标机上无法辨识备份集,所以还需要显式指定备份文件&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; restore controlfile from <span class="s1">&#39;+MYDG/ASM/AUTOBACKUP/s_796900171.277.796899745&#39;</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting restore at 17-OCT-12
+</span><span class='line'>using channel ORA_DISK_1&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;channel ORA_DISK_1: restoring control file
+</span><span class='line'>channel ORA_DISK_1: restore <span class="nb">complete</span>, elapsed <span class="nb">time</span>: 00:00:01
+</span><span class='line'>output file <span class="nv">name</span><span class="o">=</span>+MYDG/mycatalog/controlfile/current.279.796900815
+</span><span class='line'>output file <span class="nv">name</span><span class="o">=</span>+MYDG/mycatalog/controlfile/current.275.796900815
+</span><span class='line'>Finished restore at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>restore&amp;recover database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;注册备份集&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; catalog start with <span class="s1">&#39;+MYDG/RESCURE&#39;</span>;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting implicit crosscheck backup at 17-OCT-12
+</span><span class='line'>allocated channel: ORA_DISK_1
+</span><span class='line'>channel ORA_DISK_1: <span class="nv">SID</span><span class="o">=</span>3 device <span class="nb">type</span><span class="o">=</span>DISK
+</span><span class='line'>Crosschecked 3 objects
+</span><span class='line'>Finished implicit crosscheck backup at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting implicit crosscheck copy at 17-OCT-12
+</span><span class='line'>using channel ORA_DISK_1
+</span><span class='line'>Finished implicit crosscheck copy at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;searching <span class="k">for </span>all files in the recovery area
+</span><span class='line'>cataloging files...
+</span><span class='line'>no files cataloged&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;searching <span class="k">for </span>all files that match the pattern +MYDG/RESCURE&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;List of Files Unknown to the Database&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;File Name: +mydg/RESCURE/s_796900171
+</span><span class='line'>File Name: +mydg/RESCURE/annnf0_TAG20121017T090830_0
+</span><span class='line'>File Name: +mydg/RESCURE/annnf0_TAG20121017T090930_0
+</span><span class='line'>File Name: +mydg/RESCURE/nnndf0_TAG20121017T090834_0&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Do you really want to catalog the above files <span class="o">(</span>enter YES or NO<span class="o">)</span>? YES
+</span><span class='line'>cataloging files...
+</span><span class='line'>cataloging <span class="k">done</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;List of Cataloged Files&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;File Name: +mydg/RESCURE/s_796900171
+</span><span class='line'>File Name: +mydg/RESCURE/annnf0_TAG20121017T090830_0
+</span><span class='line'>File Name: +mydg/RESCURE/annnf0_TAG20121017T090930_0
+</span><span class='line'>File Name: +mydg/RESCURE/nnndf0_TAG20121017T090834_0&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; run <span class="o">{</span>
+</span><span class='line'>2&gt;       <span class="nb">set </span><span class="k">until </span><span class="nv">sequence</span><span class="o">=</span>82 <span class="nv">thread</span><span class="o">=</span>1;
+</span><span class='line'>3&gt;       restore database;
+</span><span class='line'>4&gt;       recover database;
+</span><span class='line'>5&gt; <span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;executing <span class="nb">command</span>: SET <span class="k">until </span>clause&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting restore at 17-OCT-12
+</span><span class='line'>using channel ORA_DISK_1&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;channel ORA_DISK_1: starting datafile backup <span class="nb">set </span>restore
+</span><span class='line'>channel ORA_DISK_1: specifying datafile<span class="o">(</span>s<span class="o">)</span> to restore from backup <span class="nb">set</span>
+</span><span class='line'>channel ORA_DISK_1: restoring datafile 00001 to +MYDG/mycatalog/datafile/system.277.794511081
+</span><span class='line'>channel ORA_DISK_1: restoring datafile 00002 to +MYDG/mycatalog/datafile/sysaux.276.794511081
+</span><span class='line'>channel ORA_DISK_1: restoring datafile 00003 to +MYDG/mycatalog/datafile/undotbs1.289.794511081
+</span><span class='line'>channel ORA_DISK_1: restoring datafile 00004 to +MYDG/mycatalog/datafile/users.288.794511081
+</span><span class='line'>channel ORA_DISK_1: restoring datafile 00005 to +MYDG/mycatalog/datafile/ts_example.270.796474275
+</span><span class='line'>channel ORA_DISK_1: reading from backup piece +MYDG/rescure/nnndf0_tag20121017t090834_0
+</span><span class='line'>channel ORA_DISK_1: piece <span class="nv">handle</span><span class="o">=</span>+MYDG/rescure/nnndf0_tag20121017t090834_0 <span class="nv">tag</span><span class="o">=</span>TAG20121017T090834
+</span><span class='line'>channel ORA_DISK_1: restored backup piece 1
+</span><span class='line'>channel ORA_DISK_1: restore <span class="nb">complete</span>, elapsed <span class="nb">time</span>: 00:00:35
+</span><span class='line'>Finished restore at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;Starting recover at 17-OCT-12
+</span><span class='line'>using channel ORA_DISK_1&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;starting media recovery&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;channel ORA_DISK_1: starting archived log restore to default destination
+</span><span class='line'>channel ORA_DISK_1: restoring archived log
+</span><span class='line'>archived log <span class="nv">thread</span><span class="o">=</span>1 <span class="nv">sequence</span><span class="o">=</span>81
+</span><span class='line'>channel ORA_DISK_1: reading from backup piece +MYDG/rescure/annnf0_tag20121017t090930_0
+</span><span class='line'>channel ORA_DISK_1: piece <span class="nv">handle</span><span class="o">=</span>+MYDG/rescure/annnf0_tag20121017t090930_0 <span class="nv">tag</span><span class="o">=</span>TAG20121017T090930
+</span><span class='line'>channel ORA_DISK_1: restored backup piece 1
+</span><span class='line'>channel ORA_DISK_1: restore <span class="nb">complete</span>, elapsed <span class="nb">time</span>: 00:00:01
+</span><span class='line'>archived log file <span class="nv">name</span><span class="o">=</span>+MYDG/mycatalog/archivelog/2012_10_17/thread_1_seq_81.281.796901529 <span class="nv">thread</span><span class="o">=</span>1 <span class="nv">sequence</span><span class="o">=</span>81
+</span><span class='line'>channel default: deleting archived log<span class="o">(</span>s<span class="o">)</span>
+</span><span class='line'>archived log file <span class="nv">name</span><span class="o">=</span>+MYDG/mycatalog/archivelog/2012_10_17/thread_1_seq_81.281.796901529 <span class="nv">RECID</span><span class="o">=</span>9 <span class="nv">STAMP</span><span class="o">=</span>796901529
+</span><span class='line'>media recovery <span class="nb">complete</span>, elapsed <span class="nb">time</span>: 00:00:00
+</span><span class='line'>Finished recover at 17-OCT-12&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;RMAN&gt; alter database open resetlogs;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;database opened&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>5. 验证</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>validation  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; conn hr/hr
+</span><span class='line'>Connected.
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from test_tbl;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;    ID
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;hr /&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;   123
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>
