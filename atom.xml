@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-10-17T02:29:40+00:00</updated>
+  <updated>2012-10-17T12:35:43+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -571,7 +571,17 @@
 <span class='line-number'>80</span>
 <span class='line-number'>81</span>
 <span class='line-number'>82</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#注册备份集</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>RMAN&gt; alter database mount;
+</span><span class='line'>
+</span><span class='line'>database mounted
+</span><span class='line'>released channel: ORA_DISK_1
+</span><span class='line'>
+</span><span class='line'><span class="c">#注册备份集</span>
 </span><span class='line'>RMAN&gt; catalog start with <span class="s1">&#39;+MYDG/RESCURE&#39;</span>;
 </span><span class='line'>
 </span><span class='line'>Starting implicit crosscheck backup at 17-OCT-12
