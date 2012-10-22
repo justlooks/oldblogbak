@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>oracle 11G安装示例数据库方法 - Strawhouse</title>
+  <meta name="author" content="justlooks">
+
+  
+  <meta name="description" content="oracle有个自带的sample数据库,原来10G的时候是用$ORACLE_HOME/demo/schema下的mkplug.sql脚本来导入的,11G后变成单独的安装包,下面是整个安装流程 从官网单独下载linux.x64_11gR2_examples.zip文件
+http://www. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Strawhouse" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts 
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Strawhouse</a></h1>
+  
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:justlooks.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Oracle 11G安装示例数据库方法</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T02:24:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>oracle有个自带的sample数据库,原来10G的时候是用$ORACLE_HOME/demo/schema下的mkplug.sql脚本来导入的,11G后变成单独的安装包,下面是整个安装流程</p>
+
+<p>从官网单独下载linux.x64_11gR2_examples.zip文件
+http://www.oracle.com/technetwork/database/enterprise-edition/downloads/112010-linx8664soft-100572.html</p>
+
+<p>解压,编辑模板文件,并执行安装</p>
+
+<figure class='code'><figcaption><span>install examples package  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sed -n <span class="s1">&#39;/^[^#]/p&#39;</span> demos_install.rsp
+</span><span class='line'><span class="nv">ORACLE_HOSTNAME</span><span class="o">=</span>myhost
+</span><span class='line'><span class="nv">UNIX_GROUP_NAME</span><span class="o">=</span>oinstall
+</span><span class='line'><span class="nv">INVENTORY_LOCATION</span><span class="o">=</span>/opt/oracle/app/oracle/oraInventory
+</span><span class='line'><span class="nv">SELECTED_LANGUAGES</span><span class="o">=</span>en
+</span><span class='line'><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/oracle/app/oracle/product/11.2.0/dbhome_1
+</span><span class='line'><span class="nv">ORACLE_BASE</span><span class="o">=</span>/opt/oracle/app/oracle
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>./runInstaller -silent -responseFile /home/oracle/demos_install.rsp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装前后 $ORACLE_HOME/demo/schema 目录内容对比</p>
+
+<figure class='code'><figcaption><span>installed file and dir  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># before install</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>ls <span class="nv">$ORACLE_HOME</span>/demo/schema
+</span><span class='line'>bus_intelligence  drop_sch.sql  human_resources  log  mk_dir.sql  mk_dir.sql.ouibak  mk_dir.sql.sbs  mkplug.sql  order_entry  sales_history  sted_mkplug.sql.dbl
+</span><span class='line'>
+</span><span class='line'><span class="c"># after install</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>ls <span class="nv">$ORACLE_HOME</span>/demo/schema
+</span><span class='line'>bus_intelligence  human_resources  log         mk_dir.sql.ouibak    mkplug.sql    mksample.sql.sbs  mkverify.sql  product_media  sales_history  sted_mkplug.sql.dbl
+</span><span class='line'>drop_sch.sql      info_exchange    mk_dir.sql  mk_dir.sql.ouibak.1  mksample.sql  mkunplug.sql      order_entry   README.txt     shipping
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以sys用户登录,创建表空间</p>
+
+<figure class='code'><figcaption><span>create tablespace  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select</span> * from v<span class="nv">$tablespace</span>;
+</span><span class='line'>
+</span><span class='line'>       TS# NAME                           INC BIG FLA ENC
+</span><span class='line'>---------- ------------------------------ --- --- --- ---
+</span><span class='line'>         0 SYSTEM                         YES NO  YES
+</span><span class='line'>         1 SYSAUX                         YES NO  YES
+</span><span class='line'>         2 UNDOTBS1                       YES NO  YES
+</span><span class='line'>         4 USERS                          YES NO  YES
+</span><span class='line'>         3 TEMP                           NO  NO  YES
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>SQL&gt;  CREATE TABLESPACE TS_EXAMPLE NOLOGGING DATAFILE <span class="s1">&#39;+MYDG&#39;</span> SIZE 300M REUSE AUTOEXTEND ON NEXT 640k MAXSIZE UNLIMITED;
+</span><span class='line'>
+</span><span class='line'>Tablespace created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt;  <span class="k">select</span> * from v<span class="nv">$tablespace</span>;
+</span><span class='line'>
+</span><span class='line'>       TS# NAME                           INC BIG FLA ENC
+</span><span class='line'>---------- ------------------------------ --- --- --- ---
+</span><span class='line'>         0 SYSTEM                         YES NO  YES
+</span><span class='line'>         1 SYSAUX                         YES NO  YES
+</span><span class='line'>         2 UNDOTBS1                       YES NO  YES
+</span><span class='line'>         4 USERS                          YES NO  YES
+</span><span class='line'>         3 TEMP                           NO  NO  YES
+</span><span class='line'>         6 TS_EXAMPLE                     YES NO  YES
+</span><span class='line'>
+</span><span class='line'>6 rows selected.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>name from v<span class="nv">$datafile</span>;
+</span><span class='line'>
+</span><span class='line'>NAME
+</span><span class='line'>--------------------------------------------------------------------------------
+</span><span class='line'>+MYDG/mycatalog/datafile/system.277.794511081
+</span><span class='line'>+MYDG/mycatalog/datafile/sysaux.276.794511081
+</span><span class='line'>+MYDG/mycatalog/datafile/undotbs1.289.794511081
+</span><span class='line'>+MYDG/mycatalog/datafile/users.288.794511081
+</span><span class='line'>+MYDG/mycatalog/datafile/ts_example.270.796474275
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>install schemas  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; @?/demo/schema/mksample.sql
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>SYSTEM as parameter 1:
+</span><span class='line'>Enter value <span class="k">for </span>1: 123456
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>SYS as parameter 2:
+</span><span class='line'>Enter value <span class="k">for </span>2: 123456
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>HR as parameter 3:
+</span><span class='line'>Enter value <span class="k">for </span>3: hr
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>OE as parameter 4:
+</span><span class='line'>Enter value <span class="k">for </span>4: oe
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>PM as parameter 5:
+</span><span class='line'>Enter value <span class="k">for </span>5: pm
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for </span>IX as parameter 6:
+</span><span class='line'>Enter value <span class="k">for </span>6: ix
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for  </span>SH as parameter 7:
+</span><span class='line'>Enter value <span class="k">for </span>7: sh
+</span><span class='line'>
+</span><span class='line'>specify password <span class="k">for  </span>BI as parameter 8:
+</span><span class='line'>Enter value <span class="k">for </span>8: bi
+</span><span class='line'>
+</span><span class='line'>specify default tablespace as parameter 9:
+</span><span class='line'>Enter value <span class="k">for </span>9: TS_EXAMPLE
+</span><span class='line'>
+</span><span class='line'>specify temporary tablespace as parameter 10:
+</span><span class='line'>Enter value <span class="k">for </span>10: TEMP
+</span><span class='line'>
+</span><span class='line'>specify log file directory <span class="o">(</span>including trailing delimiter<span class="o">)</span> as parameter 11: <span class="o">(</span>指定安装日志存放目录<span class="o">)</span>
+</span><span class='line'>Enter value <span class="k">for </span>11: /opt/oracle/app/oracle/product/11.2.0/dbhome_1/log/
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T02:24:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/oracle/'>Oracle</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/" title="Previous Post: oracle备份恢复测试">&laquo; oracle备份恢复测试</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">关于oracle instance启动的理解</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/05/shi-yong-mutt/">使用mutt</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - justlooks -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
