@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-10-22T02:57:51+00:00</updated>
+  <updated>2012-10-22T03:03:27+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -20,8 +20,8 @@
     <id>http://justlooks.github.com/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa</id>
     <content type="html"><![CDATA[<p>oracle有个自带的sample数据库,原来10G的时候是用$ORACLE_HOME/demo/schema下的mkplug.sql脚本来导入的,11G后变成单独的安装包,下面是整个安装流程</p>
 
-<p>从官网单独下载linux.x64_11gR2_examples.zip文件
-http://www.oracle.com/technetwork/database/enterprise-edition/downloads/112010-linx8664soft-100572.html</p>
+<p>从官网单独下载linux.x64_11gR2_examples.zip文件<br/>
+<a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/112010-linx8664soft-100572.html">http://www.oracle.com/technetwork/database/enterprise-edition/downloads/112010-linx8664soft-100572.html</a></p>
 
 <p>解压,编辑模板文件,并执行安装</p>
 
