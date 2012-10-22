@@ -9,8 +9,8 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="oracle有个自带的sample数据库,原来10G的时候是用$ORACLE_HOME/demo/schema下的mkplug.sql脚本来导入的,11G后变成单独的安装包,下面是整个安装流程 从官网单独下载linux.x64_11gR2_examples.zip文件
-http://www. &hellip;">
+  <meta name="description" content="一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
+下面我来演示下麻烦的手动创建过程 指定连接的SID export ORACLE_SID=mydb 创建启动的参数文件 vi $ORACLE_HOME/dbs/initmydb.ora 输入如下的内容 db_name &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,167 @@ http://www. &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T03:16:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
+下面我来演示下麻烦的手动创建过程</p>
+
+<p>指定连接的SID</p>
+
+<pre><code>export ORACLE_SID=mydb
+</code></pre>
+
+<p>创建启动的参数文件</p>
+
+<pre><code>vi $ORACLE_HOME/dbs/initmydb.ora
+</code></pre>
+
+<p>输入如下的内容</p>
+
+<pre><code>db_name=mydb
+db_files = 80
+db_file_multiblock_read_count = 8  
+db_block_buffers = 100
+shared_pool_size = 62198988
+log_checkpoint_interval = 10000processes = 50
+parallel_max_servers = 5  
+log_buffer = 32768
+max_dump_file_size = 10240 
+global_names = TRUE
+control_files = ‘/opt/oracle/app/oracle/admin/mydb/ora_control1.dbf’,'/opt/oracle/app/oracle/admin/mydb/ora_control2.dbf’
+background_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/bdump’
+user_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/udump’
+core_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/cdump’
+db_writer_processes = 3
+undo_management=’AUTO’
+undo_tablespace=’undo’
+</code></pre>
+
+<p>连接数据库</p>
+
+<pre><code>sqlplus / as sysdba
+</code></pre>
+
+<p>创建服务器参数文件</p>
+
+<pre><code>SQL&gt; CREATE SPFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/spfilemydb.ora’ 
+2  FROM PFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/initmydb.ora’;
+</code></pre>
+
+<p>打开数据库实例</p>
+
+<pre><code>SQL&gt; startup nomount
+ORACLE instance started.
+
+Total System Global Area  117440512 bytes
+Fixed Size                  1218004 bytes
+Variable Size              58722860 bytes
+Database Buffers           50331648 bytes
+Redo Buffers                7168000 bytes
+</code></pre>
+
+<p>创建数据库目录和dump日志目录</p>
+
+<pre><code>mkdir /opt/oracle/app/oracle/oradata/mydb
+mkdir -p /opt/oracle/app/oracle/admin/mydb/{u,c,b}dump
+</code></pre>
+
+<p>创建数据库 编辑文件</p>
+
+<pre><code>vi /tmp/cdb.sql
+</code></pre>
+
+<p>填入下列内容</p>
+
+<pre><code>CREATE DATABASE mydb
+USER SYS IDENTIFIED BY Myss123456
+USER SYSTEM IDENTIFIED BY Myss123456
+LOGFILE GROUP 1 (‘/opt/oracle/app/oracle/oradata/mydb/redo01.log’) SIZE 100M,
+GROUP 2 (‘/opt/oracle/app/oracle/oradata/mydb/redo02.log’) SIZE 100M,
+GROUP 3 (‘/opt/oracle/app/oracle/oradata/mydb/redo03.log’) SIZE 100M
+MAXLOGFILES 5
+MAXLOGMEMBERS 5
+MAXLOGHISTORY 1
+MAXDATAFILES 100
+MAXINSTANCES 1
+CHARACTER SET US7ASCII
+NATIONAL CHARACTER SET AL16UTF16
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/system01.dbf’ SIZE 325M REUSE
+EXTENT MANAGEMENT LOCAL
+SYSAUX DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/sysaux01.dbf’ SIZE 325M REUSE
+DEFAULT TABLESPACE users
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/user01.dbf’ SIZE 500M REUSE
+AUTOEXTEND ON MAXSIZE UNLIMITED
+DEFAULT TEMPORARY TABLESPACE tempts1
+TEMPFILE ‘/opt/oracle/app/oracle/oradata/mydb/temp01.dbf’
+SIZE 20M REUSE
+UNDO TABLESPACE undo
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/undotbs01.dbf’
+SIZE 200M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
+</code></pre>
+
+<p>EXTENT MANAGEMENT LOCAL 表示表空间管理为local manage形式</p>
+
+<p>然后执行</p>
+
+<pre><code>SQL&gt; @/tmp/cdb.sql
+Database created.
+</code></pre>
+
+<p>创建用户空间和索引空间</p>
+
+<pre><code>SQL&gt; CREATE TABLESPACE apps_tbs LOGGING
+2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/apps01.dbf’
+3 SIZE 300M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
+4 EXTENT MANAGEMENT LOCAL;
+
+SQL&gt; CREATE TABLESPACE indx_tbs LOGGING
+2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/indx01.dbf’
+3 SIZE 100M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
+4 EXTENT MANAGEMENT LOCAL;  
+</code></pre>
+
+<p>LOGGING选项表示该表空间的数据变更记录到redo日志中</p>
+
+<p>创建数据字典</p>
+
+<pre><code>SQL&gt; @?/rdbms/admin/catalog.sql
+SQL&gt; @?/rdbms/admin/catproc.sql
+SQL&gt; @?/sqlplus/admin/pupbld.sql
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2058,113 +2219,6 @@ vi ~/.muttrc
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure Octopress Outlook</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
-
-<hr />
-
-<p>首先生成source目录下的about目录,以及内容</p>
-
-<pre><code># rake new_page["about/about.html"]
-# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
-</code></pre>
-
-<p>接着修改导航栏添加到about.html页面的导航</p>
-
-<pre><code># cd octopress/source/_includes/custom
-# vi navigation.html
-</code></pre>
-
-<p>添加如下代码</p>
-
-<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
-</code></pre>
-
-<p>这样在导航栏就有了about页面的导航选项了</p>
-
-<p>需要更新下修改后的octopress代码</p>
-
-<pre><code># rake update_source
-# rake generate
-# rake deploy
-</code></pre>
-
-<p>这样的话更新就体现在github网站上了</p>
-
-<hr />
-
-<p>mission two:添加一个twitter侧栏</p>
-
-<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
-
-<pre><code># cd octopress
-# git pull octopress master
-# bundle install
-# rake update_source
-# rake update_style
-</code></pre>
-
-<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
-
-<pre><code># cp source/_includes/asides source/_includes/custom/asides
-</code></pre>
-
-<p>编辑_config.yml文件,添加下列文本为</p>
-
-<pre><code>page_asides: [custom/asides/twitter.html]
-</code></pre>
-
-<p>然后更新</p>
-
-<pre><code># rake generate
-# rake deploy 
-</code></pre>
-
-<hr />
-
-<p>mission three: 修改字体</p>
-
-<p>在google web font中选择一种
-编辑source/_includes/custom/head.html文件,添加代码</p>
-
-<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
-</code></pre>
-
-<p>然后刷新浏览器缓存,就可以看到效果了</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2180,6 +2234,10 @@ vi ~/.muttrc
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
       </li>
     
@@ -2193,10 +2251,6 @@ vi ~/.muttrc
     
       <li class="post">
         <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/05/shi-yong-mutt/">使用mutt</a>
       </li>
     
   </ul>

@@ -9,7 +9,8 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="Octopress在2.0之后添加了source/_includes/custom目录 source/ _includes/ #关于布局的目录 custom/ # 这个目录可以调整页面头部,导航栏,页脚以及边栏 asides/ # 这个目录关于主题边栏部分 post/ # 这个目录关于帖子的元数据 &hellip;">
+  <meta name="description" content="mission one:需要在页面增加一个新的page,比如about 首先生成source目录下的about目录,以及内容 # rake new_page["about/about.html"]
+# rake new_nage["about"] # 这将在about目录下生成about. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +68,113 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/07/xiu-gai-dao-hang-lan/">Configure Octopress Outlook</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-07T07:38:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>mission one:需要在页面增加一个新的page,比如about</p>
+
+<hr />
+
+<p>首先生成source目录下的about目录,以及内容</p>
+
+<pre><code># rake new_page["about/about.html"]
+# rake new_nage["about"]    # 这将在about目录下生成about.markdown文件而不是about.html文件
+</code></pre>
+
+<p>接着修改导航栏添加到about.html页面的导航</p>
+
+<pre><code># cd octopress/source/_includes/custom
+# vi navigation.html
+</code></pre>
+
+<p>添加如下代码</p>
+
+<pre><code>&lt;li&gt;&lt;a href="/about/about.html"&gt;About&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<p>这样在导航栏就有了about页面的导航选项了</p>
+
+<p>需要更新下修改后的octopress代码</p>
+
+<pre><code># rake update_source
+# rake generate
+# rake deploy
+</code></pre>
+
+<p>这样的话更新就体现在github网站上了</p>
+
+<hr />
+
+<p>mission two:添加一个twitter侧栏</p>
+
+<p>2.0版本内建了twitter等第三方插件,如果是老版本的话,更新到最新的octopress代码</p>
+
+<pre><code># cd octopress
+# git pull octopress master
+# bundle install
+# rake update_source
+# rake update_style
+</code></pre>
+
+<p>在octopress/source/_includes/asides目录下有twitter,pinboard等第三方插件,将其拷贝到custom/asides目录下</p>
+
+<pre><code># cp source/_includes/asides source/_includes/custom/asides
+</code></pre>
+
+<p>编辑_config.yml文件,添加下列文本为</p>
+
+<pre><code>page_asides: [custom/asides/twitter.html]
+</code></pre>
+
+<p>然后更新</p>
+
+<pre><code># rake generate
+# rake deploy 
+</code></pre>
+
+<hr />
+
+<p>mission three: 修改字体</p>
+
+<p>在google web font中选择一种
+编辑source/_includes/custom/head.html文件,添加代码</p>
+
+<pre><code>&lt;link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'&gt;
+</code></pre>
+
+<p>然后刷新浏览器缓存,就可以看到效果了</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -212,6 +320,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
       </li>
     
@@ -225,10 +337,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     
       <li class="post">
         <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/07/05/shi-yong-mutt/">使用mutt</a>
       </li>
     
   </ul>

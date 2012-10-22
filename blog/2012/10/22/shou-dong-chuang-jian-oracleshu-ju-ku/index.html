@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>手动创建oracle数据库 - Strawhouse</title>
+  <meta name="author" content="justlooks">
+
+  
+  <meta name="description" content="一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
+下面我来演示下麻烦的手动创建过程 指定连接的SID export ORACLE_SID=mydb 创建启动的参数文件 vi $ORACLE_HOME/dbs/initmydb.ora 输入如下的内容 db_name &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Strawhouse" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts 
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Strawhouse</a></h1>
+  
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:justlooks.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">手动创建oracle数据库</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T03:16:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
+下面我来演示下麻烦的手动创建过程</p>
+
+<p>指定连接的SID</p>
+
+<pre><code>export ORACLE_SID=mydb
+</code></pre>
+
+<p>创建启动的参数文件</p>
+
+<pre><code>vi $ORACLE_HOME/dbs/initmydb.ora
+</code></pre>
+
+<p>输入如下的内容</p>
+
+<pre><code>db_name=mydb
+db_files = 80
+db_file_multiblock_read_count = 8  
+db_block_buffers = 100
+shared_pool_size = 62198988
+log_checkpoint_interval = 10000processes = 50
+parallel_max_servers = 5  
+log_buffer = 32768
+max_dump_file_size = 10240 
+global_names = TRUE
+control_files = ‘/opt/oracle/app/oracle/admin/mydb/ora_control1.dbf’,'/opt/oracle/app/oracle/admin/mydb/ora_control2.dbf’
+background_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/bdump’
+user_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/udump’
+core_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/cdump’
+db_writer_processes = 3
+undo_management=’AUTO’
+undo_tablespace=’undo’
+</code></pre>
+
+<p>连接数据库</p>
+
+<pre><code>sqlplus / as sysdba
+</code></pre>
+
+<p>创建服务器参数文件</p>
+
+<pre><code>SQL&gt; CREATE SPFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/spfilemydb.ora’ 
+2  FROM PFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/initmydb.ora’;
+</code></pre>
+
+<p>打开数据库实例</p>
+
+<pre><code>SQL&gt; startup nomount
+ORACLE instance started.
+
+Total System Global Area  117440512 bytes
+Fixed Size                  1218004 bytes
+Variable Size              58722860 bytes
+Database Buffers           50331648 bytes
+Redo Buffers                7168000 bytes
+</code></pre>
+
+<p>创建数据库目录和dump日志目录</p>
+
+<pre><code>mkdir /opt/oracle/app/oracle/oradata/mydb
+mkdir -p /opt/oracle/app/oracle/admin/mydb/{u,c,b}dump
+</code></pre>
+
+<p>创建数据库 编辑文件</p>
+
+<pre><code>vi /tmp/cdb.sql
+</code></pre>
+
+<p>填入下列内容</p>
+
+<pre><code>CREATE DATABASE mydb
+USER SYS IDENTIFIED BY Myss123456
+USER SYSTEM IDENTIFIED BY Myss123456
+LOGFILE GROUP 1 (‘/opt/oracle/app/oracle/oradata/mydb/redo01.log’) SIZE 100M,
+GROUP 2 (‘/opt/oracle/app/oracle/oradata/mydb/redo02.log’) SIZE 100M,
+GROUP 3 (‘/opt/oracle/app/oracle/oradata/mydb/redo03.log’) SIZE 100M
+MAXLOGFILES 5
+MAXLOGMEMBERS 5
+MAXLOGHISTORY 1
+MAXDATAFILES 100
+MAXINSTANCES 1
+CHARACTER SET US7ASCII
+NATIONAL CHARACTER SET AL16UTF16
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/system01.dbf’ SIZE 325M REUSE
+EXTENT MANAGEMENT LOCAL
+SYSAUX DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/sysaux01.dbf’ SIZE 325M REUSE
+DEFAULT TABLESPACE users
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/user01.dbf’ SIZE 500M REUSE
+AUTOEXTEND ON MAXSIZE UNLIMITED
+DEFAULT TEMPORARY TABLESPACE tempts1
+TEMPFILE ‘/opt/oracle/app/oracle/oradata/mydb/temp01.dbf’
+SIZE 20M REUSE
+UNDO TABLESPACE undo
+DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/undotbs01.dbf’
+SIZE 200M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
+</code></pre>
+
+<p>EXTENT MANAGEMENT LOCAL 表示表空间管理为local manage形式</p>
+
+<p>然后执行</p>
+
+<pre><code>SQL&gt; @/tmp/cdb.sql
+Database created.
+</code></pre>
+
+<p>创建用户空间和索引空间</p>
+
+<pre><code>SQL&gt; CREATE TABLESPACE apps_tbs LOGGING
+2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/apps01.dbf’
+3 SIZE 300M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
+4 EXTENT MANAGEMENT LOCAL;
+
+SQL&gt; CREATE TABLESPACE indx_tbs LOGGING
+2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/indx01.dbf’
+3 SIZE 100M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
+4 EXTENT MANAGEMENT LOCAL;  
+</code></pre>
+
+<p>LOGGING选项表示该表空间的数据变更记录到redo日志中</p>
+
+<p>创建数据字典</p>
+
+<pre><code>SQL&gt; @?/rdbms/admin/catalog.sql
+SQL&gt; @?/rdbms/admin/catproc.sql
+SQL&gt; @?/sqlplus/admin/pupbld.sql
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T03:16:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/oracle/'>oracle</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/" title="Previous Post: oracle 11G安装示例数据库方法">&laquo; oracle 11G安装示例数据库方法</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">关于oracle instance启动的理解</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - justlooks -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
