@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-10-22T04:21:50+00:00</updated>
+  <updated>2012-10-24T01:02:58+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[关于RAC grid用户配置设置的小陷阱]]></title>
+    <link href="http://justlooks.github.com/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/"/>
+    <updated>2012-10-24T00:43:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing</id>
+    <content type="html"><![CDATA[<p>刚装好的RAC发现无法登录ASM实例</p>
+
+<figure class='code'><figcaption><span>ASMCMD-08102  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>asmcmd
+</span><span class='line'>Connected to an idle instance.
+</span><span class='line'>ASMCMD&gt; ls
+</span><span class='line'>ASMCMD-08102: no connection to ASM; <span class="nb">command </span>requires ASM to run
+</span><span class='line'>ASMCMD&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ASM实例正常启动,并且监听器也正常工作</p>
+
+<figure class='code'><figcaption><span>status of ASM & listener  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>srvctl status asm -a
+</span><span class='line'>ASM is running on zf006orc1,zf007orc2
+</span><span class='line'>ASM is enabled.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>srvctl status listener
+</span><span class='line'>Listener LISTENER is enabled
+</span><span class='line'>Listener LISTENER is running on node<span class="o">(</span>s<span class="o">)</span>: zf006orc1,zf007orc2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>经过多方排查发现grid用户的ORACLE_HOME目录设置有问题(一个&#8217;/&#8217;引起的血案)</p>
+
+<figure class='code'><figcaption><span>.bash_profile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#原先设置</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/app/11.2.0/grid/
+</span><span class='line'><span class="c">#正确设置</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/app/11.2.0/grid
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次登录发现一切正常</p>
+
+<figure class='code'><figcaption><span>asmcmd  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>asmcmd
+</span><span class='line'>ASMCMD&gt; ls
+</span><span class='line'>CRSINFO/
+</span><span class='line'>DGDATA/
+</span><span class='line'>DGFRA/
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[手动创建oracle数据库]]></title>

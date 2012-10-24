@@ -9,8 +9,15 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
-下面我来演示下麻烦的手动创建过程 指定连接的SID export ORACLE_SID=mydb 创建启动的参数文件 vi $ORACLE_HOME/dbs/initmydb.ora 输入如下的内容 db_name &hellip;">
+  <meta name="description" content="刚装好的RAC发现无法登录ASM实例 ASMCMD-08102 1
+2
+3
+4
+5
+$ asmcmd
+Connected to an idle instance.
+ASMCMD&gt; ls
+ASMCMD-08102: no connection to ASM; command requires &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +75,108 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC Grid用户配置设置的小陷阱</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-24T00:43:00+00:00" pubdate data-updated="true">Oct 24<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>刚装好的RAC发现无法登录ASM实例</p>
+
+<figure class='code'><figcaption><span>ASMCMD-08102  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>asmcmd
+</span><span class='line'>Connected to an idle instance.
+</span><span class='line'>ASMCMD&gt; ls
+</span><span class='line'>ASMCMD-08102: no connection to ASM; <span class="nb">command </span>requires ASM to run
+</span><span class='line'>ASMCMD&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ASM实例正常启动,并且监听器也正常工作</p>
+
+<figure class='code'><figcaption><span>status of ASM & listener  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>srvctl status asm -a
+</span><span class='line'>ASM is running on zf006orc1,zf007orc2
+</span><span class='line'>ASM is enabled.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>srvctl status listener
+</span><span class='line'>Listener LISTENER is enabled
+</span><span class='line'>Listener LISTENER is running on node<span class="o">(</span>s<span class="o">)</span>: zf006orc1,zf007orc2
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>经过多方排查发现grid用户的ORACLE_HOME目录设置有问题(一个&#8217;/&#8217;引起的血案)</p>
+
+<figure class='code'><figcaption><span>.bash_profile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#原先设置</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/app/11.2.0/grid/
+</span><span class='line'><span class="c">#正确设置</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/app/11.2.0/grid
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次登录发现一切正常</p>
+
+<figure class='code'><figcaption><span>asmcmd  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>asmcmd
+</span><span class='line'>ASMCMD&gt; ls
+</span><span class='line'>CRSINFO/
+</span><span class='line'>DGDATA/
+</span><span class='line'>DGFRA/
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2170,55 +2279,6 @@ vi ~/.muttrc
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/07/test/">Test</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>内嵌代码</p>
-
-<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/06/07/test/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2234,6 +2294,10 @@ vi ~/.muttrc
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
       </li>
     
@@ -2247,10 +2311,6 @@ vi ~/.muttrc
     
       <li class="post">
         <a href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">关于oracle instance启动的理解</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">ubuntu设置vpn</a>
       </li>
     
   </ul>
