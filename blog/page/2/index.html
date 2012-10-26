@@ -9,8 +9,7 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="内嵌代码 perl&#8217;s &#8220;hello world&#8221; 1
-perl -e &#39;print &quot;hello world\n&quot;&#39; ">
+  <meta name="description" content="1. 首先配置getmail收信 安装getmail4 apt-get install getmail4 在非root用户目录下创建邮箱 mkdir -m 700 ~/Mail/inbox/{,tmp,new,cur} 创建配置文件 mkdir -p ~/.getmail;cd ~/. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +67,353 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; ">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/03/muttpei-zhi/">Mutt配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-03T05:54:00+00:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1. 首先配置getmail收信  </h2>
+
+<p>安装getmail4</p>
+
+<pre><code>apt-get install getmail4
+</code></pre>
+
+<p>在非root用户目录下创建邮箱</p>
+
+<pre><code>mkdir -m 700 ~/Mail/inbox/{,tmp,new,cur}    
+</code></pre>
+
+<p>创建配置文件</p>
+
+<pre><code>mkdir -p ~/.getmail;cd ~/.getmail
+vi rc-gmail
+</code></pre>
+
+<p>添加内容</p>
+
+<figure class='code'><figcaption><span>content of rc-gmail  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>options<span class="o">]</span>
+</span><span class='line'><span class="nv">verbose</span> <span class="o">=</span> 2
+</span><span class='line'><span class="nv">read_all</span> <span class="o">=</span> <span class="nb">false</span>
+</span><span class='line'><span class="nv">message_log</span> <span class="o">=</span> ~/.getmail/log
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span>retriever<span class="o">]</span>
+</span><span class='line'><span class="nb">type</span> <span class="o">=</span> SimplePOP3SSLRetriever
+</span><span class='line'><span class="nv">server</span> <span class="o">=</span> pop.gmail.com
+</span><span class='line'><span class="nv">username</span> <span class="o">=</span> username@gmail.com
+</span><span class='line'><span class="nv">port</span> <span class="o">=</span> 995
+</span><span class='line'><span class="nv">password</span> <span class="o">=</span> mypass
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span>destination<span class="o">]</span>
+</span><span class='line'><span class="nb">type</span> <span class="o">=</span> Maildir
+</span><span class='line'><span class="nv">path</span> <span class="o">=</span> ~/Mail/inbox/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试能够正常收信后配置完成</p>
+
+<figure class='code'><figcaption><span>test for getmail  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>getmail -r ./rc-gmail
+</span><span class='line'>getmail version 4.24.0
+</span><span class='line'>Copyright <span class="o">(</span>C<span class="o">)</span> 1998-2009 Charles Cazabon.  Licensed under the GNU GPL version 2.
+</span><span class='line'>SimplePOP3SSLRetriever:username@gmail.com@pop.gmail.com:995:
+</span><span class='line'>  msg   1/366 <span class="o">(</span>6551 bytes<span class="o">)</span> from &lt;m-767udykq9AUsm7rk5O7vR8Zd9lLZaWb@bounce.linkedin.com&gt; delivered to Maildir /home/xxx/Mail/inbox/
+</span><span class='line'>  msg   2/366 <span class="o">(</span>2267 bytes<span class="o">)</span> from &lt;admin@travian.cc&gt; delivered to Maildir /home/xxx/Mail/inbox/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果需要配置多个帐号的话,那么需要写多个rc文件,一个rc文件对应一个邮箱帐号,运行时,通过-r选项传入多个配置文件</p>
+
+<pre><code>getmail -r rc-gmail -r rc-company
+</code></pre>
+
+<p>如果需要每隔10分钟收信一次则可以列入计划任务</p>
+
+<figure class='code'><figcaption><span>content of crontab  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>*/10 * * * * /usr/bin/getmail -r rc-gmail -r rc-company
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>那么现在所有的邮件都是放到一个目录下的,大杂烩,如何对这些邮件进行分类筛选呢?<br/>
+比如现在的需求是需要将@company.com来源的邮件放入Mail中的workmate目录下,<br/>
+而将公司行政通知(notify@company.com)放到Mail中的notify目录下</p>
+
+<h2>2. 配置procmail对邮件进行过滤</h2>
+
+<p>安装procmail</p>
+
+<pre><code>apt-get install procmail
+</code></pre>
+
+<p>创建配置文件</p>
+
+<pre><code>vi ~/.procmailrc
+</code></pre>
+
+<p>添加内容</p>
+
+<figure class='code'><figcaption><span>content of .procmailrc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">MAILDIR</span><span class="o">=</span><span class="nv">$HOME</span>/Mail
+</span><span class='line'><span class="nv">DEFAULT</span><span class="o">=</span><span class="nv">$MAILDIR</span>/inbox
+</span><span class='line'><span class="nv">LOGFILE</span><span class="o">=</span><span class="nv">$MAILDIR</span>/.procmaillog
+</span><span class='line'>
+</span><span class='line'><span class="nv">NOTIFY</span><span class="o">=</span><span class="nv">$MAILDIR</span>/notify
+</span><span class='line'><span class="nv">WORKMATES</span><span class="o">=</span><span class="nv">$MAILDIR</span>/workmates
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'>* ^From.*notify@company<span class="se">\.</span>com
+</span><span class='line'><span class="k">${</span><span class="nv">NOTIFY</span><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'>* ^From.*@company<span class="se">\.</span>com
+</span><span class='line'><span class="k">${</span><span class="nv">WORKMATES</span><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'><span class="k">${</span><span class="nv">DEFAULT</span><span class="k">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建对应目录</p>
+
+<pre><code>mkdir -p ~/Mail/{workmates,notify}
+</code></pre>
+
+<p>同时需要对getmail对应的配置文件做些修改</p>
+
+<pre><code>[destination]
+type = Maildir
+path = ~/Mail/inbox/
+</code></pre>
+
+<p>改为</p>
+
+<pre><code>[destination]
+type = MDA_external
+path = /usr/bin/procmail
+unixfrom = true
+</code></pre>
+
+<p>再运行getmail时就会发现邮件被正确的放到对应的目录下了</p>
+
+<pre><code>$ ls ~/Mail/notify/
+msg.0sxB  msg.1sxB  msg.9sxB  msg.AtxB  msg.msxB  msg.psxB  msg.-sxB  msg.wsxB
+$ ls ~/Mail/workmates/
+msg.2sxB  msg.4sxB  msg.6sxB  msg.8sxB  msg.lsxB  msg.osxB  msg.rsxB  msg._sxB  msg.usxB  msg.xsxB  msg.zsxB
+msg.3sxB  msg.5sxB  msg.7sxB  msg.BtxB  msg.nsxB  msg.qsxB  msg.ssxB  msg.tsxB  msg.vsxB  msg.ysxB
+</code></pre>
+
+<h2>3. 配置mutt显示管理邮件</h2>
+
+<p>在磁盘上的邮件文件需要有工具能够直观的显示,并且提供方便的管理功能,MUTT可以满足需求,它是个强大的邮件管理系统</p>
+
+<p>安装mutt</p>
+
+<pre><code>apt-get install mutt
+</code></pre>
+
+<p>编辑配置文件</p>
+
+<pre><code>cp /etc/Muttrc ~/.muttrc
+vi ~/.muttrc
+</code></pre>
+
+<p>添加如下内容</p>
+
+<figure class='code'><figcaption><span>content of .muttrc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">folder</span><span class="o">=</span><span class="s2">&quot;$HOME/Mail&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">mbox_type</span><span class="o">=</span><span class="s2">&quot;Maildir&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">mbox</span><span class="o">=</span><span class="s2">&quot;+inbox&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">spoolfile</span><span class="o">=</span><span class="s2">&quot;~/Mail/inbox&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">postponed</span><span class="o">=</span><span class="s2">&quot;+postponed&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">record</span><span class="o">=</span><span class="s2">&quot;+sent&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">mailboxes</span>  <span class="o">=</span><span class="nv">inbox</span> <span class="o">=</span><span class="nv">workmates</span> <span class="o">=</span>notify
+</span><span class='line'><span class="nb">set </span><span class="nv">check_new</span> <span class="o">=</span> yes
+</span><span class='line'><span class="nb">set </span><span class="nv">timeout</span> <span class="o">=</span> 600
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外需要对.procmailrc文件做些修改,因为默认情况下procmail是把邮件存为mbox格式的,为了直观显示邮件标题,需要改为maildir格式
+只需要将对应目录结尾加上&#8217;/&#8217;就可以了</p>
+
+<figure class='code'><figcaption><span>content of .procmailrc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">MAILDIR</span><span class="o">=</span><span class="nv">$HOME</span>/Mail
+</span><span class='line'><span class="nv">DEFAULT</span><span class="o">=</span><span class="nv">$MAILDIR</span>/inbox
+</span><span class='line'><span class="nv">LOGFILE</span><span class="o">=</span><span class="nv">$MAILDIR</span>/.procmaillog
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nv">NOTIFY</span><span class="o">=</span><span class="nv">$MAILDIR</span>/notify/
+</span><span class='line'><span class="nv">WORKMATES</span><span class="o">=</span><span class="nv">$MAILDIR</span>/workmates/
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'>* ^From.*notify@company<span class="se">\.</span>com
+</span><span class='line'><span class="k">${</span><span class="nv">NOTIFY</span><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'>* ^From.*@company<span class="se">\.</span>com
+</span><span class='line'><span class="k">${</span><span class="nv">WORKMATES</span><span class="k">}</span>
+</span><span class='line'>
+</span><span class='line'>:0:
+</span><span class='line'><span class="k">${</span><span class="nv">DEFAULT</span><span class="k">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>4. 关于发送邮件</h2>
+
+<p>安装msmtp</p>
+
+<pre><code>apt-get install msmtp
+</code></pre>
+
+<p>编辑配置文件</p>
+
+<pre><code>vi ~/.msmtprc
+</code></pre>
+
+<figure class='code'><figcaption><span>content of .msmtprc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>account gmail
+</span><span class='line'>host smtp.gmail.com
+</span><span class='line'>port 587
+</span><span class='line'>auth on
+</span><span class='line'>tls on
+</span><span class='line'>tls_trust_file /etc/ssl/certs/ca-certificates.crt
+</span><span class='line'>from user@gmail.com
+</span><span class='line'>user user@gmail.com
+</span><span class='line'>password mypass
+</span><span class='line'>logfile ~/msmtp/msmtp.log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试发送正常</p>
+
+<pre><code>echo test | msmtp -a gmail receive@test.com
+</code></pre>
+
+<p>另外设置.muttrc文件,使其能够利用msmtp发送邮件</p>
+
+<figure class='code'><figcaption><span>content of .muttrc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">sendmail</span><span class="o">=</span><span class="s2">&quot;/usr/bin/msmtp&quot;</span>
+</span><span class='line'><span class="nb">set </span><span class="nv">use_from</span><span class="o">=</span>yes
+</span><span class='line'><span class="nb">set </span><span class="nv">realname</span><span class="o">=</span>myname
+</span><span class='line'><span class="nb">set </span><span class="nv">from</span><span class="o">=</span>user@gmail.com
+</span><span class='line'><span class="nb">set </span><span class="nv">envelope_from</span><span class="o">=</span>yes
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -369,6 +715,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
       </li>
     
@@ -382,10 +732,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     
       <li class="post">
         <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">关于oracle instance启动的理解</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-10-24T01:02:58+00:00</updated>
+  <updated>2012-10-26T15:01:25+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,535 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[表空间传输]]></title>
+    <link href="http://justlooks.github.com/blog/2012/10/26/biao-kong-jian-chuan-shu/"/>
+    <updated>2012-10-26T14:37:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/10/26/biao-kong-jian-chuan-shu</id>
+    <content type="html"><![CDATA[<h2>下面演示一下用expdp/impdp进行表空间传输的过程</h2>
+
+<p>创建测试数据</p>
+
+<figure class='code'><figcaption><span>use for test  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>tablespace_name from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME
+</span><span class='line'>------------------------------
+</span><span class='line'>SYSTEM
+</span><span class='line'>SYSAUX
+</span><span class='line'>UNDOTBS1
+</span><span class='line'>TEMP
+</span><span class='line'>USERS
+</span><span class='line'>TS_EXAMPLE
+</span><span class='line'>TS_FBDA
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create tablespace tbs_his;
+</span><span class='line'>
+</span><span class='line'>Tablespace created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create tablespace tbs_his_idx;
+</span><span class='line'>
+</span><span class='line'>Tablespace created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>tablespace_name from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME
+</span><span class='line'>------------------------------
+</span><span class='line'>SYSTEM
+</span><span class='line'>SYSAUX
+</span><span class='line'>UNDOTBS1
+</span><span class='line'>TEMP
+</span><span class='line'>USERS
+</span><span class='line'>TS_EXAMPLE
+</span><span class='line'>TS_FBDA
+</span><span class='line'>TBS_HIS
+</span><span class='line'>TBS_HIS_IDX
+</span><span class='line'>
+</span><span class='line'>9 rows selected.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; conn hr/hr
+</span><span class='line'>Connected.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create table order_history <span class="o">(</span>id int<span class="o">)</span> tablespace tbs_his;
+</span><span class='line'>
+</span><span class='line'>Table created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; insert into order_history values<span class="o">(</span>999<span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>1 row created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; commit;
+</span><span class='line'>
+</span><span class='line'>Commit complete.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create index idx_id on order_history<span class="o">(</span>id<span class="o">)</span> tablespace tbs_his_idx;
+</span><span class='line'>
+</span><span class='line'>Index created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>table_name as object_name ,tablespace_name from user_tables where <span class="nv">table_name</span><span class="o">=</span><span class="s1">&#39;ORDER_HISTORY&#39;</span> union <span class="k">select </span>index_name as
+</span><span class='line'>
+</span><span class='line'>object_name, tablespace_name from user_indexes where <span class="nv">index_name</span><span class="o">=</span><span class="s1">&#39;IDX_ID&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>OBJECT_NAME                    TABLESPACE_NAME
+</span><span class='line'>------------------------------ ------------------------------
+</span><span class='line'>IDX_ID                         TBS_HIS_IDX
+</span><span class='line'>ORDER_HISTORY                  TBS_HIS
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>检查下空间是否是自包含的</p>
+
+<figure class='code'><figcaption><span>check if self-contained  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; execute dbms_tts.transport_set_check<span class="o">(</span><span class="s1">&#39;TBS_HIS_IDX,TBS_HIS&#39;</span>,TRUE<span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from transport_set_violations;
+</span><span class='line'>
+</span><span class='line'>no rows selected
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>改为只读模式并用expdp导出</p>
+
+<figure class='code'><figcaption><span>export tablespaces  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; alter tablespace TBS_HIS <span class="nb">read </span>only;
+</span><span class='line'>
+</span><span class='line'>Tablespace altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; alter tablespace TBS_HIS_IDX <span class="nb">read </span>only;
+</span><span class='line'>
+</span><span class='line'>Tablespace altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>TABLESPACE_NAME,STATUS from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME                STATUS
+</span><span class='line'>------------------------------ ---------
+</span><span class='line'>SYSTEM                         ONLINE
+</span><span class='line'>SYSAUX                         ONLINE
+</span><span class='line'>UNDOTBS1                       ONLINE
+</span><span class='line'>TEMP                           ONLINE
+</span><span class='line'>USERS                          ONLINE
+</span><span class='line'>TS_EXAMPLE                     ONLINE
+</span><span class='line'>TS_FBDA                        ONLINE
+</span><span class='line'>TBS_HIS                        READ ONLY
+</span><span class='line'>TBS_HIS_IDX                    READ ONLY
+</span><span class='line'>
+</span><span class='line'>9 rows selected.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span> expdp <span class="se">\&#39;</span>/ as sysdba<span class="se">\&#39;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir <span class="nv">transport_tablespaces</span><span class="o">=</span>TBS_HIS_IDX,TBS_HIS
+</span><span class='line'>
+</span><span class='line'><span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>
+</span><span class='line'>Export: Release 11.2.0.1.0 - Production on Fri Oct 26 22:12:34 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>Starting <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span>:  <span class="s2">&quot;/******** AS SYSDBA&quot;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir
+</span><span class='line'>
+</span><span class='line'><span class="nv">transport_tablespaces</span><span class="o">=</span>TBS_HIS_IDX,TBS_HIS <span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/PLUGTS_BLK
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/POST_INSTANCE/PLUGTS_BLK
+</span><span class='line'>Master table <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span> successfully loaded/unloaded
+</span><span class='line'>******************************************************************************
+</span><span class='line'>Dump file <span class="nb">set </span><span class="k">for </span>SYS.SYS_EXPORT_TRANSPORTABLE_01 is:
+</span><span class='line'>  /opt/oracle/app/oracle/admin/mycatalog/dpdump/mytab.dmp
+</span><span class='line'>******************************************************************************
+</span><span class='line'>Datafiles required <span class="k">for </span>transportable tablespace TBS_HIS:
+</span><span class='line'>  +MYDG/mycatalog/datafile/tbs_his.325.797718943
+</span><span class='line'>Datafiles required <span class="k">for </span>transportable tablespace TBS_HIS_IDX:
+</span><span class='line'>  +MYDG/mycatalog/datafile/tbs_his_idx.326.797718959
+</span><span class='line'>Job <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span> successfully completed at 22:13:39
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建新数据库</p>
+
+<figure class='code'><figcaption><span>create new database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbName testdb -sid testdb -sysPassword 123456 -systemPassword 123456
+</span><span class='line'>
+</span><span class='line'>-emConfiguration NONE -storageType ASM -asmsnmpPassword MyOra123<span class="nv">$ </span>-diskGroupName MYDG -recoveryGroupName MYDG -characterSet AL32UTF8 -
+</span><span class='line'>
+</span><span class='line'>nationalCharacterSet AL32UTF8 -databaseType OLTP
+</span><span class='line'>Copying database files
+</span><span class='line'>1% <span class="nb">complete</span>
+</span><span class='line'>3% <span class="nb">complete</span>
+</span><span class='line'>10% <span class="nb">complete</span>
+</span><span class='line'>17% <span class="nb">complete</span>
+</span><span class='line'>24% <span class="nb">complete</span>
+</span><span class='line'>31% <span class="nb">complete</span>
+</span><span class='line'>35% <span class="nb">complete</span>
+</span><span class='line'>Creating and starting Oracle instance
+</span><span class='line'>37% <span class="nb">complete</span>
+</span><span class='line'>42% <span class="nb">complete</span>
+</span><span class='line'>47% <span class="nb">complete</span>
+</span><span class='line'>52% <span class="nb">complete</span>
+</span><span class='line'>53% <span class="nb">complete</span>
+</span><span class='line'>56% <span class="nb">complete</span>
+</span><span class='line'>58% <span class="nb">complete</span>
+</span><span class='line'>Registering database with Oracle Restart
+</span><span class='line'>64% <span class="nb">complete</span>
+</span><span class='line'>Completing Database Creation
+</span><span class='line'>68% <span class="nb">complete</span>
+</span><span class='line'>71% <span class="nb">complete</span>
+</span><span class='line'>75% <span class="nb">complete</span>
+</span><span class='line'>85% <span class="nb">complete</span>
+</span><span class='line'>96% <span class="nb">complete</span>
+</span><span class='line'>100% <span class="nb">complete</span>
+</span><span class='line'>Look at the log file <span class="s2">&quot;/opt/oracle/app/oracle/cfgtoollogs/dbca/testdb/testdb.log&quot;</span> <span class="k">for </span>further details.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>拷贝表空间文件到新数据库</p>
+
+<figure class='code'><figcaption><span>copy files to new database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ASMCMD&gt; cp +MYDG/mycatalog/datafile/tbs_his.325.797718943 +MYDG/testdb/datafile/tbs_his
+</span><span class='line'>copying +MYDG/mycatalog/datafile/tbs_his.325.797718943 -&gt; +MYDG/testdb/datafile/tbs_his
+</span><span class='line'>ASMCMD&gt; cp +MYDG/mycatalog/datafile/TBS_HIS_IDX.326.797718959 +MYDG/testdb/datafile/TBS_HIS_IDX
+</span><span class='line'>copying +MYDG/mycatalog/datafile/TBS_HIS_IDX.326.797718959 -&gt; +MYDG/testdb/datafile/TBS_HIS_IDX
+</span><span class='line'>
+</span><span class='line'>ASMCMD&gt; ls -l +MYDG/testdb/datafile
+</span><span class='line'>Type      Redund  Striped  Time             Sys  Name
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    SYSAUX.330.797725005
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    SYSTEM.329.797725005
+</span><span class='line'>                                            N    <span class="nv">TBS_HIS_IDX</span> <span class="o">=</span>&gt; +MYDG/ASM/DATAFILE/TBS_HIS_IDX.344.797725991
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    UNDOTBS1.331.797725005
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    USERS.332.797725005
+</span><span class='line'>                                            N    <span class="nv">tbs_his</span> <span class="o">=</span>&gt; +MYDG/ASM/DATAFILE/tbs_his.343.797725943
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span><span class="nb">export </span><span class="nv">ORACLE_SID</span><span class="o">=</span>testdb
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>sqlplus / as sysdba
+</span><span class='line'>
+</span><span class='line'>SQL*Plus: Release 11.2.0.1.0 Production on Fri Oct 26 22:22:52 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Connected to:
+</span><span class='line'>Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>instance_name from v<span class="nv">$instance</span>;
+</span><span class='line'>
+</span><span class='line'>INSTANCE_NAME
+</span><span class='line'>----------------
+</span><span class='line'>testdb
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>DIRECTORY_NAME,DIRECTORY_PATH FROM DBA_DIRECTORIES WHERE <span class="nv">DIRECTORY_NAME</span> <span class="o">=</span> <span class="s1">&#39;DATA_PUMP_DIR&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>DIRECTORY_NAME                 DIRECTORY_PATH
+</span><span class='line'>------------------------------ --------------------------------------------------
+</span><span class='line'>DATA_PUMP_DIR                  /opt/oracle/app/oracle/admin/testdb/dpdump/
+</span><span class='line'>
+</span><span class='line'><span class="c">#将exp文件转移到新数据库目录下</span>
+</span><span class='line'><span class="nv">$ </span>mv /opt/oracle/app/oracle/admin/mycatalog/dpdump/mytab.dmp /opt/oracle/app/oracle/admin/testdb/dpdump/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建hr用户并导入表空间</p>
+
+<figure class='code'><figcaption><span>create user and import tablespaces  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; create user hr identified by hr default tablespace users temporary tablespace temp;
+</span><span class='line'>
+</span><span class='line'>User created.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>impdp <span class="se">\&#39;</span>/ as sysdba<span class="se">\&#39;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir <span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>
+</span><span class='line'><span class="nv">transport_datafiles</span><span class="o">=</span><span class="s1">&#39;+MYDG/testdb/datafile/TBS_HIS_IDX&#39;</span>,<span class="s1">&#39;+MYDG/testdb/datafile/tbs_his&#39;</span>
+</span><span class='line'>
+</span><span class='line'>Import: Release 11.2.0.1.0 - Production on Fri Oct 26 22:44:52 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>Master table <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span> successfully loaded/unloaded
+</span><span class='line'>Starting <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span>:  <span class="s2">&quot;/******** AS SYSDBA&quot;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir
+</span><span class='line'>
+</span><span class='line'><span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log <span class="nv">transport_datafiles</span><span class="o">=</span>+MYDG/testdb/datafile/TBS_HIS_IDX,+MYDG/testdb/datafile/tbs_his
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/PLUGTS_BLK
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/POST_INSTANCE/PLUGTS_BLK
+</span><span class='line'>Job <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span> successfully completed at 22:45:07
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>验证</p>
+
+<figure class='code'><figcaption><span>validation  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select</span> * from hr.order_history;
+</span><span class='line'>
+</span><span class='line'>        ID
+</span><span class='line'>----------
+</span><span class='line'>       999
+</span><span class='line'>
+</span><span class='line'>SQL&gt;  <span class="k">select </span>table_name as object_name ,tablespace_name from dba_tables where <span class="nv">table_name</span><span class="o">=</span><span class="s1">&#39;ORDER_HISTORY&#39;</span> union <span class="k">select </span>index_name as
+</span><span class='line'>
+</span><span class='line'>object_name, tablespace_name from dba_indexes where <span class="nv">index_name</span><span class="o">=</span><span class="s1">&#39;IDX_ID&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>OBJECT_NAME                    TABLESPACE_NAME
+</span><span class='line'>------------------------------ ------------------------------
+</span><span class='line'>IDX_ID                         TBS_HIS_IDX
+</span><span class='line'>ORDER_HISTORY                  TBS_HIS
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于RAC grid用户配置设置的小陷阱]]></title>

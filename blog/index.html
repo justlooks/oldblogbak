@@ -9,15 +9,42 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="刚装好的RAC发现无法登录ASM实例 ASMCMD-08102 1
+  <meta name="description" content="下面演示一下用expdp/impdp进行表空间传输的过程 创建测试数据 use for test 1
 2
 3
 4
 5
-$ asmcmd
-Connected to an idle instance.
-ASMCMD&gt; ls
-ASMCMD-08102: no connection to ASM; command requires &hellip;">
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +102,562 @@ ASMCMD-08102: no connection to ASM; command requires &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-26T14:37:00+00:00" pubdate data-updated="true">Oct 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>下面演示一下用expdp/impdp进行表空间传输的过程</h2>
+
+<p>创建测试数据</p>
+
+<figure class='code'><figcaption><span>use for test  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>tablespace_name from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME
+</span><span class='line'>------------------------------
+</span><span class='line'>SYSTEM
+</span><span class='line'>SYSAUX
+</span><span class='line'>UNDOTBS1
+</span><span class='line'>TEMP
+</span><span class='line'>USERS
+</span><span class='line'>TS_EXAMPLE
+</span><span class='line'>TS_FBDA
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create tablespace tbs_his;
+</span><span class='line'>
+</span><span class='line'>Tablespace created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create tablespace tbs_his_idx;
+</span><span class='line'>
+</span><span class='line'>Tablespace created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>tablespace_name from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME
+</span><span class='line'>------------------------------
+</span><span class='line'>SYSTEM
+</span><span class='line'>SYSAUX
+</span><span class='line'>UNDOTBS1
+</span><span class='line'>TEMP
+</span><span class='line'>USERS
+</span><span class='line'>TS_EXAMPLE
+</span><span class='line'>TS_FBDA
+</span><span class='line'>TBS_HIS
+</span><span class='line'>TBS_HIS_IDX
+</span><span class='line'>
+</span><span class='line'>9 rows selected.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; conn hr/hr
+</span><span class='line'>Connected.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create table order_history <span class="o">(</span>id int<span class="o">)</span> tablespace tbs_his;
+</span><span class='line'>
+</span><span class='line'>Table created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; insert into order_history values<span class="o">(</span>999<span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>1 row created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; commit;
+</span><span class='line'>
+</span><span class='line'>Commit complete.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; create index idx_id on order_history<span class="o">(</span>id<span class="o">)</span> tablespace tbs_his_idx;
+</span><span class='line'>
+</span><span class='line'>Index created.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>table_name as object_name ,tablespace_name from user_tables where <span class="nv">table_name</span><span class="o">=</span><span class="s1">&#39;ORDER_HISTORY&#39;</span> union <span class="k">select </span>index_name as
+</span><span class='line'>
+</span><span class='line'>object_name, tablespace_name from user_indexes where <span class="nv">index_name</span><span class="o">=</span><span class="s1">&#39;IDX_ID&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>OBJECT_NAME                    TABLESPACE_NAME
+</span><span class='line'>------------------------------ ------------------------------
+</span><span class='line'>IDX_ID                         TBS_HIS_IDX
+</span><span class='line'>ORDER_HISTORY                  TBS_HIS
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>检查下空间是否是自包含的</p>
+
+<figure class='code'><figcaption><span>check if self-contained  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; execute dbms_tts.transport_set_check<span class="o">(</span><span class="s1">&#39;TBS_HIS_IDX,TBS_HIS&#39;</span>,TRUE<span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from transport_set_violations;
+</span><span class='line'>
+</span><span class='line'>no rows selected
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>改为只读模式并用expdp导出</p>
+
+<figure class='code'><figcaption><span>export tablespaces  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; alter tablespace TBS_HIS <span class="nb">read </span>only;
+</span><span class='line'>
+</span><span class='line'>Tablespace altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; alter tablespace TBS_HIS_IDX <span class="nb">read </span>only;
+</span><span class='line'>
+</span><span class='line'>Tablespace altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>TABLESPACE_NAME,STATUS from dba_tablespaces;
+</span><span class='line'>
+</span><span class='line'>TABLESPACE_NAME                STATUS
+</span><span class='line'>------------------------------ ---------
+</span><span class='line'>SYSTEM                         ONLINE
+</span><span class='line'>SYSAUX                         ONLINE
+</span><span class='line'>UNDOTBS1                       ONLINE
+</span><span class='line'>TEMP                           ONLINE
+</span><span class='line'>USERS                          ONLINE
+</span><span class='line'>TS_EXAMPLE                     ONLINE
+</span><span class='line'>TS_FBDA                        ONLINE
+</span><span class='line'>TBS_HIS                        READ ONLY
+</span><span class='line'>TBS_HIS_IDX                    READ ONLY
+</span><span class='line'>
+</span><span class='line'>9 rows selected.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span> expdp <span class="se">\&#39;</span>/ as sysdba<span class="se">\&#39;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir <span class="nv">transport_tablespaces</span><span class="o">=</span>TBS_HIS_IDX,TBS_HIS
+</span><span class='line'>
+</span><span class='line'><span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>
+</span><span class='line'>Export: Release 11.2.0.1.0 - Production on Fri Oct 26 22:12:34 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>Starting <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span>:  <span class="s2">&quot;/******** AS SYSDBA&quot;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir
+</span><span class='line'>
+</span><span class='line'><span class="nv">transport_tablespaces</span><span class="o">=</span>TBS_HIS_IDX,TBS_HIS <span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/PLUGTS_BLK
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/POST_INSTANCE/PLUGTS_BLK
+</span><span class='line'>Master table <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span> successfully loaded/unloaded
+</span><span class='line'>******************************************************************************
+</span><span class='line'>Dump file <span class="nb">set </span><span class="k">for </span>SYS.SYS_EXPORT_TRANSPORTABLE_01 is:
+</span><span class='line'>  /opt/oracle/app/oracle/admin/mycatalog/dpdump/mytab.dmp
+</span><span class='line'>******************************************************************************
+</span><span class='line'>Datafiles required <span class="k">for </span>transportable tablespace TBS_HIS:
+</span><span class='line'>  +MYDG/mycatalog/datafile/tbs_his.325.797718943
+</span><span class='line'>Datafiles required <span class="k">for </span>transportable tablespace TBS_HIS_IDX:
+</span><span class='line'>  +MYDG/mycatalog/datafile/tbs_his_idx.326.797718959
+</span><span class='line'>Job <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_EXPORT_TRANSPORTABLE_01&quot;</span> successfully completed at 22:13:39
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建新数据库</p>
+
+<figure class='code'><figcaption><span>create new database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>dbca -silent -createDatabase -templateName General_Purpose.dbc -gdbName testdb -sid testdb -sysPassword 123456 -systemPassword 123456
+</span><span class='line'>
+</span><span class='line'>-emConfiguration NONE -storageType ASM -asmsnmpPassword MyOra123<span class="nv">$ </span>-diskGroupName MYDG -recoveryGroupName MYDG -characterSet AL32UTF8 -
+</span><span class='line'>
+</span><span class='line'>nationalCharacterSet AL32UTF8 -databaseType OLTP
+</span><span class='line'>Copying database files
+</span><span class='line'>1% <span class="nb">complete</span>
+</span><span class='line'>3% <span class="nb">complete</span>
+</span><span class='line'>10% <span class="nb">complete</span>
+</span><span class='line'>17% <span class="nb">complete</span>
+</span><span class='line'>24% <span class="nb">complete</span>
+</span><span class='line'>31% <span class="nb">complete</span>
+</span><span class='line'>35% <span class="nb">complete</span>
+</span><span class='line'>Creating and starting Oracle instance
+</span><span class='line'>37% <span class="nb">complete</span>
+</span><span class='line'>42% <span class="nb">complete</span>
+</span><span class='line'>47% <span class="nb">complete</span>
+</span><span class='line'>52% <span class="nb">complete</span>
+</span><span class='line'>53% <span class="nb">complete</span>
+</span><span class='line'>56% <span class="nb">complete</span>
+</span><span class='line'>58% <span class="nb">complete</span>
+</span><span class='line'>Registering database with Oracle Restart
+</span><span class='line'>64% <span class="nb">complete</span>
+</span><span class='line'>Completing Database Creation
+</span><span class='line'>68% <span class="nb">complete</span>
+</span><span class='line'>71% <span class="nb">complete</span>
+</span><span class='line'>75% <span class="nb">complete</span>
+</span><span class='line'>85% <span class="nb">complete</span>
+</span><span class='line'>96% <span class="nb">complete</span>
+</span><span class='line'>100% <span class="nb">complete</span>
+</span><span class='line'>Look at the log file <span class="s2">&quot;/opt/oracle/app/oracle/cfgtoollogs/dbca/testdb/testdb.log&quot;</span> <span class="k">for </span>further details.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>拷贝表空间文件到新数据库</p>
+
+<figure class='code'><figcaption><span>copy files to new database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ASMCMD&gt; cp +MYDG/mycatalog/datafile/tbs_his.325.797718943 +MYDG/testdb/datafile/tbs_his
+</span><span class='line'>copying +MYDG/mycatalog/datafile/tbs_his.325.797718943 -&gt; +MYDG/testdb/datafile/tbs_his
+</span><span class='line'>ASMCMD&gt; cp +MYDG/mycatalog/datafile/TBS_HIS_IDX.326.797718959 +MYDG/testdb/datafile/TBS_HIS_IDX
+</span><span class='line'>copying +MYDG/mycatalog/datafile/TBS_HIS_IDX.326.797718959 -&gt; +MYDG/testdb/datafile/TBS_HIS_IDX
+</span><span class='line'>
+</span><span class='line'>ASMCMD&gt; ls -l +MYDG/testdb/datafile
+</span><span class='line'>Type      Redund  Striped  Time             Sys  Name
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    SYSAUX.330.797725005
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    SYSTEM.329.797725005
+</span><span class='line'>                                            N    <span class="nv">TBS_HIS_IDX</span> <span class="o">=</span>&gt; +MYDG/ASM/DATAFILE/TBS_HIS_IDX.344.797725991
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    UNDOTBS1.331.797725005
+</span><span class='line'>DATAFILE  UNPROT  COARSE   OCT 26 22:00:00  Y    USERS.332.797725005
+</span><span class='line'>                                            N    <span class="nv">tbs_his</span> <span class="o">=</span>&gt; +MYDG/ASM/DATAFILE/tbs_his.343.797725943
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span><span class="nb">export </span><span class="nv">ORACLE_SID</span><span class="o">=</span>testdb
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>sqlplus / as sysdba
+</span><span class='line'>
+</span><span class='line'>SQL*Plus: Release 11.2.0.1.0 Production on Fri Oct 26 22:22:52 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Connected to:
+</span><span class='line'>Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>instance_name from v<span class="nv">$instance</span>;
+</span><span class='line'>
+</span><span class='line'>INSTANCE_NAME
+</span><span class='line'>----------------
+</span><span class='line'>testdb
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>DIRECTORY_NAME,DIRECTORY_PATH FROM DBA_DIRECTORIES WHERE <span class="nv">DIRECTORY_NAME</span> <span class="o">=</span> <span class="s1">&#39;DATA_PUMP_DIR&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>DIRECTORY_NAME                 DIRECTORY_PATH
+</span><span class='line'>------------------------------ --------------------------------------------------
+</span><span class='line'>DATA_PUMP_DIR                  /opt/oracle/app/oracle/admin/testdb/dpdump/
+</span><span class='line'>
+</span><span class='line'><span class="c">#将exp文件转移到新数据库目录下</span>
+</span><span class='line'><span class="nv">$ </span>mv /opt/oracle/app/oracle/admin/mycatalog/dpdump/mytab.dmp /opt/oracle/app/oracle/admin/testdb/dpdump/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建hr用户并导入表空间</p>
+
+<figure class='code'><figcaption><span>create user and import tablespaces  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; create user hr identified by hr default tablespace users temporary tablespace temp;
+</span><span class='line'>
+</span><span class='line'>User created.
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>impdp <span class="se">\&#39;</span>/ as sysdba<span class="se">\&#39;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir <span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log
+</span><span class='line'>
+</span><span class='line'><span class="nv">transport_datafiles</span><span class="o">=</span><span class="s1">&#39;+MYDG/testdb/datafile/TBS_HIS_IDX&#39;</span>,<span class="s1">&#39;+MYDG/testdb/datafile/tbs_his&#39;</span>
+</span><span class='line'>
+</span><span class='line'>Import: Release 11.2.0.1.0 - Production on Fri Oct 26 22:44:52 2012
+</span><span class='line'>
+</span><span class='line'>Copyright <span class="o">(</span>c<span class="o">)</span> 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+</span><span class='line'>
+</span><span class='line'>Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.1.0 - 64bit Production
+</span><span class='line'>With the Partitioning, Automatic Storage Management, Oracle Label Security, OLAP,
+</span><span class='line'>Data Mining and Real Application Testing options
+</span><span class='line'>Master table <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span> successfully loaded/unloaded
+</span><span class='line'>Starting <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span>:  <span class="s2">&quot;/******** AS SYSDBA&quot;</span> <span class="nv">dumpfile</span><span class="o">=</span>mytab.dmp <span class="nv">directory</span><span class="o">=</span>data_pump_dir
+</span><span class='line'>
+</span><span class='line'><span class="nv">logfile</span><span class="o">=</span>data_pump_dir:mytab.log <span class="nv">transport_datafiles</span><span class="o">=</span>+MYDG/testdb/datafile/TBS_HIS_IDX,+MYDG/testdb/datafile/tbs_his
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/PLUGTS_BLK
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/INDEX_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/TABLE_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>TRANSPORTABLE_EXPORT/POST_INSTANCE/PLUGTS_BLK
+</span><span class='line'>Job <span class="s2">&quot;SYS&quot;</span>.<span class="s2">&quot;SYS_IMPORT_TRANSPORTABLE_01&quot;</span> successfully completed at 22:45:07
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>验证</p>
+
+<figure class='code'><figcaption><span>validation  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select</span> * from hr.order_history;
+</span><span class='line'>
+</span><span class='line'>        ID
+</span><span class='line'>----------
+</span><span class='line'>       999
+</span><span class='line'>
+</span><span class='line'>SQL&gt;  <span class="k">select </span>table_name as object_name ,tablespace_name from dba_tables where <span class="nv">table_name</span><span class="o">=</span><span class="s1">&#39;ORDER_HISTORY&#39;</span> union <span class="k">select </span>index_name as
+</span><span class='line'>
+</span><span class='line'>object_name, tablespace_name from dba_indexes where <span class="nv">index_name</span><span class="o">=</span><span class="s1">&#39;IDX_ID&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>OBJECT_NAME                    TABLESPACE_NAME
+</span><span class='line'>------------------------------ ------------------------------
+</span><span class='line'>IDX_ID                         TBS_HIS_IDX
+</span><span class='line'>ORDER_HISTORY                  TBS_HIS
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1932,353 +2515,6 @@ Z 上一页邮件
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/03/muttpei-zhi/">Mutt配置</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-03T05:54:00+00:00" pubdate data-updated="true">Jul 3<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>1. 首先配置getmail收信  </h2>
-
-<p>安装getmail4</p>
-
-<pre><code>apt-get install getmail4
-</code></pre>
-
-<p>在非root用户目录下创建邮箱</p>
-
-<pre><code>mkdir -m 700 ~/Mail/inbox/{,tmp,new,cur}    
-</code></pre>
-
-<p>创建配置文件</p>
-
-<pre><code>mkdir -p ~/.getmail;cd ~/.getmail
-vi rc-gmail
-</code></pre>
-
-<p>添加内容</p>
-
-<figure class='code'><figcaption><span>content of rc-gmail  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>options<span class="o">]</span>
-</span><span class='line'><span class="nv">verbose</span> <span class="o">=</span> 2
-</span><span class='line'><span class="nv">read_all</span> <span class="o">=</span> <span class="nb">false</span>
-</span><span class='line'><span class="nv">message_log</span> <span class="o">=</span> ~/.getmail/log
-</span><span class='line'>
-</span><span class='line'><span class="o">[</span>retriever<span class="o">]</span>
-</span><span class='line'><span class="nb">type</span> <span class="o">=</span> SimplePOP3SSLRetriever
-</span><span class='line'><span class="nv">server</span> <span class="o">=</span> pop.gmail.com
-</span><span class='line'><span class="nv">username</span> <span class="o">=</span> username@gmail.com
-</span><span class='line'><span class="nv">port</span> <span class="o">=</span> 995
-</span><span class='line'><span class="nv">password</span> <span class="o">=</span> mypass
-</span><span class='line'>
-</span><span class='line'><span class="o">[</span>destination<span class="o">]</span>
-</span><span class='line'><span class="nb">type</span> <span class="o">=</span> Maildir
-</span><span class='line'><span class="nv">path</span> <span class="o">=</span> ~/Mail/inbox/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>测试能够正常收信后配置完成</p>
-
-<figure class='code'><figcaption><span>test for getmail  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>getmail -r ./rc-gmail
-</span><span class='line'>getmail version 4.24.0
-</span><span class='line'>Copyright <span class="o">(</span>C<span class="o">)</span> 1998-2009 Charles Cazabon.  Licensed under the GNU GPL version 2.
-</span><span class='line'>SimplePOP3SSLRetriever:username@gmail.com@pop.gmail.com:995:
-</span><span class='line'>  msg   1/366 <span class="o">(</span>6551 bytes<span class="o">)</span> from &lt;m-767udykq9AUsm7rk5O7vR8Zd9lLZaWb@bounce.linkedin.com&gt; delivered to Maildir /home/xxx/Mail/inbox/
-</span><span class='line'>  msg   2/366 <span class="o">(</span>2267 bytes<span class="o">)</span> from &lt;admin@travian.cc&gt; delivered to Maildir /home/xxx/Mail/inbox/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果需要配置多个帐号的话,那么需要写多个rc文件,一个rc文件对应一个邮箱帐号,运行时,通过-r选项传入多个配置文件</p>
-
-<pre><code>getmail -r rc-gmail -r rc-company
-</code></pre>
-
-<p>如果需要每隔10分钟收信一次则可以列入计划任务</p>
-
-<figure class='code'><figcaption><span>content of crontab  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*/10 * * * * /usr/bin/getmail -r rc-gmail -r rc-company
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>那么现在所有的邮件都是放到一个目录下的,大杂烩,如何对这些邮件进行分类筛选呢?<br/>
-比如现在的需求是需要将@company.com来源的邮件放入Mail中的workmate目录下,<br/>
-而将公司行政通知(notify@company.com)放到Mail中的notify目录下</p>
-
-<h2>2. 配置procmail对邮件进行过滤</h2>
-
-<p>安装procmail</p>
-
-<pre><code>apt-get install procmail
-</code></pre>
-
-<p>创建配置文件</p>
-
-<pre><code>vi ~/.procmailrc
-</code></pre>
-
-<p>添加内容</p>
-
-<figure class='code'><figcaption><span>content of .procmailrc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">MAILDIR</span><span class="o">=</span><span class="nv">$HOME</span>/Mail
-</span><span class='line'><span class="nv">DEFAULT</span><span class="o">=</span><span class="nv">$MAILDIR</span>/inbox
-</span><span class='line'><span class="nv">LOGFILE</span><span class="o">=</span><span class="nv">$MAILDIR</span>/.procmaillog
-</span><span class='line'>
-</span><span class='line'><span class="nv">NOTIFY</span><span class="o">=</span><span class="nv">$MAILDIR</span>/notify
-</span><span class='line'><span class="nv">WORKMATES</span><span class="o">=</span><span class="nv">$MAILDIR</span>/workmates
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'>* ^From.*notify@company<span class="se">\.</span>com
-</span><span class='line'><span class="k">${</span><span class="nv">NOTIFY</span><span class="k">}</span>
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'>* ^From.*@company<span class="se">\.</span>com
-</span><span class='line'><span class="k">${</span><span class="nv">WORKMATES</span><span class="k">}</span>
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'><span class="k">${</span><span class="nv">DEFAULT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建对应目录</p>
-
-<pre><code>mkdir -p ~/Mail/{workmates,notify}
-</code></pre>
-
-<p>同时需要对getmail对应的配置文件做些修改</p>
-
-<pre><code>[destination]
-type = Maildir
-path = ~/Mail/inbox/
-</code></pre>
-
-<p>改为</p>
-
-<pre><code>[destination]
-type = MDA_external
-path = /usr/bin/procmail
-unixfrom = true
-</code></pre>
-
-<p>再运行getmail时就会发现邮件被正确的放到对应的目录下了</p>
-
-<pre><code>$ ls ~/Mail/notify/
-msg.0sxB  msg.1sxB  msg.9sxB  msg.AtxB  msg.msxB  msg.psxB  msg.-sxB  msg.wsxB
-$ ls ~/Mail/workmates/
-msg.2sxB  msg.4sxB  msg.6sxB  msg.8sxB  msg.lsxB  msg.osxB  msg.rsxB  msg._sxB  msg.usxB  msg.xsxB  msg.zsxB
-msg.3sxB  msg.5sxB  msg.7sxB  msg.BtxB  msg.nsxB  msg.qsxB  msg.ssxB  msg.tsxB  msg.vsxB  msg.ysxB
-</code></pre>
-
-<h2>3. 配置mutt显示管理邮件</h2>
-
-<p>在磁盘上的邮件文件需要有工具能够直观的显示,并且提供方便的管理功能,MUTT可以满足需求,它是个强大的邮件管理系统</p>
-
-<p>安装mutt</p>
-
-<pre><code>apt-get install mutt
-</code></pre>
-
-<p>编辑配置文件</p>
-
-<pre><code>cp /etc/Muttrc ~/.muttrc
-vi ~/.muttrc
-</code></pre>
-
-<p>添加如下内容</p>
-
-<figure class='code'><figcaption><span>content of .muttrc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">folder</span><span class="o">=</span><span class="s2">&quot;$HOME/Mail&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">mbox_type</span><span class="o">=</span><span class="s2">&quot;Maildir&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">mbox</span><span class="o">=</span><span class="s2">&quot;+inbox&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">spoolfile</span><span class="o">=</span><span class="s2">&quot;~/Mail/inbox&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">postponed</span><span class="o">=</span><span class="s2">&quot;+postponed&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">record</span><span class="o">=</span><span class="s2">&quot;+sent&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">mailboxes</span>  <span class="o">=</span><span class="nv">inbox</span> <span class="o">=</span><span class="nv">workmates</span> <span class="o">=</span>notify
-</span><span class='line'><span class="nb">set </span><span class="nv">check_new</span> <span class="o">=</span> yes
-</span><span class='line'><span class="nb">set </span><span class="nv">timeout</span> <span class="o">=</span> 600
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>另外需要对.procmailrc文件做些修改,因为默认情况下procmail是把邮件存为mbox格式的,为了直观显示邮件标题,需要改为maildir格式
-只需要将对应目录结尾加上&#8217;/&#8217;就可以了</p>
-
-<figure class='code'><figcaption><span>content of .procmailrc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">MAILDIR</span><span class="o">=</span><span class="nv">$HOME</span>/Mail
-</span><span class='line'><span class="nv">DEFAULT</span><span class="o">=</span><span class="nv">$MAILDIR</span>/inbox
-</span><span class='line'><span class="nv">LOGFILE</span><span class="o">=</span><span class="nv">$MAILDIR</span>/.procmaillog
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="nv">NOTIFY</span><span class="o">=</span><span class="nv">$MAILDIR</span>/notify/
-</span><span class='line'><span class="nv">WORKMATES</span><span class="o">=</span><span class="nv">$MAILDIR</span>/workmates/
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'>* ^From.*notify@company<span class="se">\.</span>com
-</span><span class='line'><span class="k">${</span><span class="nv">NOTIFY</span><span class="k">}</span>
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'>* ^From.*@company<span class="se">\.</span>com
-</span><span class='line'><span class="k">${</span><span class="nv">WORKMATES</span><span class="k">}</span>
-</span><span class='line'>
-</span><span class='line'>:0:
-</span><span class='line'><span class="k">${</span><span class="nv">DEFAULT</span><span class="k">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>4. 关于发送邮件</h2>
-
-<p>安装msmtp</p>
-
-<pre><code>apt-get install msmtp
-</code></pre>
-
-<p>编辑配置文件</p>
-
-<pre><code>vi ~/.msmtprc
-</code></pre>
-
-<figure class='code'><figcaption><span>content of .msmtprc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>account gmail
-</span><span class='line'>host smtp.gmail.com
-</span><span class='line'>port 587
-</span><span class='line'>auth on
-</span><span class='line'>tls on
-</span><span class='line'>tls_trust_file /etc/ssl/certs/ca-certificates.crt
-</span><span class='line'>from user@gmail.com
-</span><span class='line'>user user@gmail.com
-</span><span class='line'>password mypass
-</span><span class='line'>logfile ~/msmtp/msmtp.log
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>测试发送正常</p>
-
-<pre><code>echo test | msmtp -a gmail receive@test.com
-</code></pre>
-
-<p>另外设置.muttrc文件,使其能够利用msmtp发送邮件</p>
-
-<figure class='code'><figcaption><span>content of .muttrc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">sendmail</span><span class="o">=</span><span class="s2">&quot;/usr/bin/msmtp&quot;</span>
-</span><span class='line'><span class="nb">set </span><span class="nv">use_from</span><span class="o">=</span>yes
-</span><span class='line'><span class="nb">set </span><span class="nv">realname</span><span class="o">=</span>myname
-</span><span class='line'><span class="nb">set </span><span class="nv">from</span><span class="o">=</span>user@gmail.com
-</span><span class='line'><span class="nb">set </span><span class="nv">envelope_from</span><span class="o">=</span>yes
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2294,6 +2530,10 @@ vi ~/.muttrc
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
       </li>
     
@@ -2307,10 +2547,6 @@ vi ~/.muttrc
     
       <li class="post">
         <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/09/28/guan-yu-oracle-instanceqi-dong-de-li-jie/">关于oracle instance启动的理解</a>
       </li>
     
   </ul>
