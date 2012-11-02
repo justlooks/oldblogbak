@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>使用logminer挖掘redo log - Strawhouse</title>
+  <meta name="author" content="justlooks">
+
+  
+  <meta name="description" content="oracle提供了logminer工具,可以对online redo log或者archive log做方便的检视
+下面是工具使用的简单演示 使用logminer的条件是开启minimal level supplemental logging enable minimal level &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Strawhouse" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts 
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Strawhouse</a></h1>
+  
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:justlooks.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">使用logminer挖掘redo Log</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-02T00:33:00+00:00" pubdate data-updated="true">Nov 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>oracle提供了logminer工具,可以对online redo log或者archive log做方便的检视
+下面是工具使用的简单演示</p>
+
+<p>使用logminer的条件是开启minimal level supplemental logging</p>
+
+<figure class='code'><figcaption><span>enable minimal level supplemental logging  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>supplemental_log_data_min from v<span class="nv">$database</span>;
+</span><span class='line'>
+</span><span class='line'>SUPPLEME
+</span><span class='line'>--------
+</span><span class='line'>NO
+</span><span class='line'>
+</span><span class='line'>SQL&gt; alter database add supplemental log data;
+</span><span class='line'>
+</span><span class='line'>Database altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>supplemental_log_data_min from v<span class="nv">$database</span>;
+</span><span class='line'>
+</span><span class='line'>SUPPLEME
+</span><span class='line'>--------
+</span><span class='line'>YES
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外如果是手动创建数据库的话,logminer是需要额外安装的,dbca建库会自动安装</p>
+
+<figure class='code'><figcaption><span>install logminer  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#判断是否安装logminer相关package</span>
+</span><span class='line'>
+</span><span class='line'>SQL&gt; desc dbms_logmnr;
+</span><span class='line'>SQL&gt; desc dbms_logmnr_d;
+</span><span class='line'>SQL&gt; desc dbms_logmnr_session;
+</span><span class='line'>
+</span><span class='line'><span class="c"># 以上3个包的安装文件分别对应为</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslm.sql
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslmd.sql
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslms.sql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>选择在线日志(也可以是archive log)</p>
+
+<figure class='code'><figcaption><span>status of redo log  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>sequence#,name,status,deleted from v<span class="nv">$archived_log</span> where <span class="nv">deleted</span><span class="o">=</span><span class="s1">&#39;NO&#39;</span>;
+</span><span class='line'>
+</span><span class='line'> SEQUENCE# NAME                                                                   S DEL
+</span><span class='line'>---------- ---------------------------------------------------------------------- - ---
+</span><span class='line'>       119 +MYDG/mycatalog/archivelog/2012_10_29/thread_1_seq_119.357.797983263   A NO
+</span><span class='line'>       120 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_120.355.798020785   A NO
+</span><span class='line'>       121 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_121.353.798037233   A NO
+</span><span class='line'>       122 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_122.351.798069683   A NO
+</span><span class='line'>       123 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_123.350.798107255   A NO
+</span><span class='line'>       124 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_124.328.798120041   A NO
+</span><span class='line'>       125 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_125.327.798156075   A NO
+</span><span class='line'>       126 +MYDG/mycatalog/archivelog/2012_11_01/thread_1_seq_126.324.798193729   A NO
+</span><span class='line'>       127 +MYDG/mycatalog/archivelog/2012_11_01/thread_1_seq_127.323.798205101   A NO
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>f.group#,l.sequence#,l.status,f.member from v<span class="nv">$logfile</span> f inner join v<span class="nv">$log</span> l on f.group# <span class="o">=</span> l.group#;
+</span><span class='line'>
+</span><span class='line'>    GROUP#  SEQUENCE# STATUS           MEMBER
+</span><span class='line'>---------- ---------- ---------------- ------------------------------------------------------------
+</span><span class='line'>         3        126 INACTIVE         +MYDG/mycatalog/onlinelog/group_3.279.794511165
+</span><span class='line'>         3        126 INACTIVE         +MYDG/mycatalog/onlinelog/group_3.282.794511167
+</span><span class='line'>         2        128 CURRENT          +MYDG/mycatalog/onlinelog/group_2.283.794511165
+</span><span class='line'>         2        128 CURRENT          +MYDG/mycatalog/onlinelog/group_2.281.794511165
+</span><span class='line'>         1        127 INACTIVE         +MYDG/mycatalog/onlinelog/group_1.285.794511163
+</span><span class='line'>         1        127 INACTIVE         +MYDG/mycatalog/onlinelog/group_1.284.794511163
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外开个session执行hr schema中t1表的改变</p>
+
+<figure class='code'><figcaption><span>change table t1  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sqlplus hr/hr
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from t1;
+</span><span class='line'>
+</span><span class='line'>        ID NAME
+</span><span class='line'>---------- ----------
+</span><span class='line'>         2 kkk
+</span><span class='line'>         3 tttt
+</span><span class='line'>         1 recovery
+</span><span class='line'>
+</span><span class='line'>SQL&gt; delete from t1 where <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;kkk&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>1 row deleted.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; update t1 <span class="nb">set </span><span class="nv">name</span><span class="o">=</span><span class="s1">&#39;logmnr&#39;</span> where <span class="nv">id</span><span class="o">=</span>3;
+</span><span class='line'>
+</span><span class='line'>1 row updated.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; commit;
+</span><span class='line'>
+</span><span class='line'>Commit complete.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from t1;
+</span><span class='line'>
+</span><span class='line'>        ID NAME
+</span><span class='line'>---------- ----------
+</span><span class='line'>         3 logmnr
+</span><span class='line'>         1 recovery
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将group 2中的其中一个member做为挖掘对象</p>
+
+<figure class='code'><figcaption><span>logminer process  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; BEGIN
+</span><span class='line'>  2  dbms_logmnr.add_logfile <span class="o">(</span><span class="s1">&#39;+MYDG/mycatalog/onlinelog/group_2.283.794511165&#39;</span><span class="o">)</span>;
+</span><span class='line'>  3  END;
+</span><span class='line'>  4  /
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; BEGIN
+</span><span class='line'>  2  dbms_logmnr.start_logmnr<span class="o">(</span><span class="nv">options</span> <span class="o">=</span>&gt; dbms_logmnr.dict_from_online_catalog<span class="o">)</span>;
+</span><span class='line'>  3  END;
+</span><span class='line'>  4  /
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>抓取需要的记录</p>
+
+<figure class='code'><figcaption><span>get useful info  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>OBJECT_ID,data_object_id from dba_objects where <span class="nv">owner</span><span class="o">=</span><span class="s1">&#39;HR&#39;</span> and <span class="nv">OBJECT_NAME</span><span class="o">=</span><span class="s1">&#39;T1&#39;</span>;
+</span><span class='line'>
+</span><span class='line'> OBJECT_ID DATA_OBJECT_ID
+</span><span class='line'>---------- --------------
+</span><span class='line'>     77065          77065
+</span><span class='line'>
+</span><span class='line'>SQL&gt; SELECT username AS USR, <span class="o">(</span>XIDUSN <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span> XIDSLT <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span>  XIDSQN<span class="o">)</span> AS XID,
+</span><span class='line'>  2  SQL_REDO, SQL_UNDO FROM V<span class="nv">$LOGMNR_CONTENTS</span> WHERE DATA_OBJ#<span class="o">=</span>77065;
+</span><span class='line'>
+</span><span class='line'>USR                            XID
+</span><span class='line'>------------------------------ --------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>SQL_REDO
+</span><span class='line'>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>SQL_UNDO
+</span><span class='line'>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>UNKNOWN                        8.22.2258
+</span><span class='line'>update <span class="s2">&quot;HR&quot;</span>.<span class="s2">&quot;T1&quot;</span> <span class="nb">set</span> <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;logmnr&#39;</span> where <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;tttt&#39;</span> and <span class="nv">ROWID</span> <span class="o">=</span> <span class="s1">&#39;AAAS0JAAFAAACi2AAA&#39;</span>;
+</span><span class='line'>update <span class="s2">&quot;HR&quot;</span>.<span class="s2">&quot;T1&quot;</span> <span class="nb">set</span> <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;tttt&#39;</span> where <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;logmnr&#39;</span> and <span class="nv">ROWID</span> <span class="o">=</span> <span class="s1">&#39;AAAS0JAAFAAACi2AAA&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-02T00:33:00+00:00" pubdate data-updated="true">Nov 2<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/oracle/'>oracle</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/26/biao-kong-jian-chuan-shu/" title="Previous Post: 表空间传输">&laquo; 表空间传输</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - justlooks -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -9,42 +9,8 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="下面演示一下用expdp/impdp进行表空间传输的过程 创建测试数据 use for test 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36 &hellip;">
+  <meta name="description" content="oracle提供了logminer工具,可以对online redo log或者archive log做方便的检视
+下面是工具使用的简单演示 使用logminer的条件是开启minimal level supplemental logging enable minimal level &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,6 +68,299 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo Log</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-02T00:33:00+00:00" pubdate data-updated="true">Nov 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>oracle提供了logminer工具,可以对online redo log或者archive log做方便的检视
+下面是工具使用的简单演示</p>
+
+<p>使用logminer的条件是开启minimal level supplemental logging</p>
+
+<figure class='code'><figcaption><span>enable minimal level supplemental logging  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>supplemental_log_data_min from v<span class="nv">$database</span>;
+</span><span class='line'>
+</span><span class='line'>SUPPLEME
+</span><span class='line'>--------
+</span><span class='line'>NO
+</span><span class='line'>
+</span><span class='line'>SQL&gt; alter database add supplemental log data;
+</span><span class='line'>
+</span><span class='line'>Database altered.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>supplemental_log_data_min from v<span class="nv">$database</span>;
+</span><span class='line'>
+</span><span class='line'>SUPPLEME
+</span><span class='line'>--------
+</span><span class='line'>YES
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外如果是手动创建数据库的话,logminer是需要额外安装的,dbca建库会自动安装</p>
+
+<figure class='code'><figcaption><span>install logminer  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#判断是否安装logminer相关package</span>
+</span><span class='line'>
+</span><span class='line'>SQL&gt; desc dbms_logmnr;
+</span><span class='line'>SQL&gt; desc dbms_logmnr_d;
+</span><span class='line'>SQL&gt; desc dbms_logmnr_session;
+</span><span class='line'>
+</span><span class='line'><span class="c"># 以上3个包的安装文件分别对应为</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslm.sql
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslmd.sql
+</span><span class='line'><span class="nv">$ORACLE_HOME</span>/rdbms/admin/dbmslms.sql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>选择在线日志(也可以是archive log)</p>
+
+<figure class='code'><figcaption><span>status of redo log  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>sequence#,name,status,deleted from v<span class="nv">$archived_log</span> where <span class="nv">deleted</span><span class="o">=</span><span class="s1">&#39;NO&#39;</span>;
+</span><span class='line'>
+</span><span class='line'> SEQUENCE# NAME                                                                   S DEL
+</span><span class='line'>---------- ---------------------------------------------------------------------- - ---
+</span><span class='line'>       119 +MYDG/mycatalog/archivelog/2012_10_29/thread_1_seq_119.357.797983263   A NO
+</span><span class='line'>       120 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_120.355.798020785   A NO
+</span><span class='line'>       121 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_121.353.798037233   A NO
+</span><span class='line'>       122 +MYDG/mycatalog/archivelog/2012_10_30/thread_1_seq_122.351.798069683   A NO
+</span><span class='line'>       123 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_123.350.798107255   A NO
+</span><span class='line'>       124 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_124.328.798120041   A NO
+</span><span class='line'>       125 +MYDG/mycatalog/archivelog/2012_10_31/thread_1_seq_125.327.798156075   A NO
+</span><span class='line'>       126 +MYDG/mycatalog/archivelog/2012_11_01/thread_1_seq_126.324.798193729   A NO
+</span><span class='line'>       127 +MYDG/mycatalog/archivelog/2012_11_01/thread_1_seq_127.323.798205101   A NO
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select </span>f.group#,l.sequence#,l.status,f.member from v<span class="nv">$logfile</span> f inner join v<span class="nv">$log</span> l on f.group# <span class="o">=</span> l.group#;
+</span><span class='line'>
+</span><span class='line'>    GROUP#  SEQUENCE# STATUS           MEMBER
+</span><span class='line'>---------- ---------- ---------------- ------------------------------------------------------------
+</span><span class='line'>         3        126 INACTIVE         +MYDG/mycatalog/onlinelog/group_3.279.794511165
+</span><span class='line'>         3        126 INACTIVE         +MYDG/mycatalog/onlinelog/group_3.282.794511167
+</span><span class='line'>         2        128 CURRENT          +MYDG/mycatalog/onlinelog/group_2.283.794511165
+</span><span class='line'>         2        128 CURRENT          +MYDG/mycatalog/onlinelog/group_2.281.794511165
+</span><span class='line'>         1        127 INACTIVE         +MYDG/mycatalog/onlinelog/group_1.285.794511163
+</span><span class='line'>         1        127 INACTIVE         +MYDG/mycatalog/onlinelog/group_1.284.794511163
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外开个session执行hr schema中t1表的改变</p>
+
+<figure class='code'><figcaption><span>change table t1  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sqlplus hr/hr
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from t1;
+</span><span class='line'>
+</span><span class='line'>        ID NAME
+</span><span class='line'>---------- ----------
+</span><span class='line'>         2 kkk
+</span><span class='line'>         3 tttt
+</span><span class='line'>         1 recovery
+</span><span class='line'>
+</span><span class='line'>SQL&gt; delete from t1 where <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;kkk&#39;</span>;
+</span><span class='line'>
+</span><span class='line'>1 row deleted.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; update t1 <span class="nb">set </span><span class="nv">name</span><span class="o">=</span><span class="s1">&#39;logmnr&#39;</span> where <span class="nv">id</span><span class="o">=</span>3;
+</span><span class='line'>
+</span><span class='line'>1 row updated.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; commit;
+</span><span class='line'>
+</span><span class='line'>Commit complete.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; <span class="k">select</span> * from t1;
+</span><span class='line'>
+</span><span class='line'>        ID NAME
+</span><span class='line'>---------- ----------
+</span><span class='line'>         3 logmnr
+</span><span class='line'>         1 recovery
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将group 2中的其中一个member做为挖掘对象</p>
+
+<figure class='code'><figcaption><span>logminer process  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; BEGIN
+</span><span class='line'>  2  dbms_logmnr.add_logfile <span class="o">(</span><span class="s1">&#39;+MYDG/mycatalog/onlinelog/group_2.283.794511165&#39;</span><span class="o">)</span>;
+</span><span class='line'>  3  END;
+</span><span class='line'>  4  /
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span><span class='line'>
+</span><span class='line'>SQL&gt; BEGIN
+</span><span class='line'>  2  dbms_logmnr.start_logmnr<span class="o">(</span><span class="nv">options</span> <span class="o">=</span>&gt; dbms_logmnr.dict_from_online_catalog<span class="o">)</span>;
+</span><span class='line'>  3  END;
+</span><span class='line'>  4  /
+</span><span class='line'>
+</span><span class='line'>PL/SQL procedure successfully completed.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>抓取需要的记录</p>
+
+<figure class='code'><figcaption><span>get useful info  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; <span class="k">select </span>OBJECT_ID,data_object_id from dba_objects where <span class="nv">owner</span><span class="o">=</span><span class="s1">&#39;HR&#39;</span> and <span class="nv">OBJECT_NAME</span><span class="o">=</span><span class="s1">&#39;T1&#39;</span>;
+</span><span class='line'>
+</span><span class='line'> OBJECT_ID DATA_OBJECT_ID
+</span><span class='line'>---------- --------------
+</span><span class='line'>     77065          77065
+</span><span class='line'>
+</span><span class='line'>SQL&gt; SELECT username AS USR, <span class="o">(</span>XIDUSN <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span> XIDSLT <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span>  XIDSQN<span class="o">)</span> AS XID,
+</span><span class='line'>  2  SQL_REDO, SQL_UNDO FROM V<span class="nv">$LOGMNR_CONTENTS</span> WHERE DATA_OBJ#<span class="o">=</span>77065;
+</span><span class='line'>
+</span><span class='line'>USR                            XID
+</span><span class='line'>------------------------------ --------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>SQL_REDO
+</span><span class='line'>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>SQL_UNDO
+</span><span class='line'>--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+</span><span class='line'>UNKNOWN                        8.22.2258
+</span><span class='line'>update <span class="s2">&quot;HR&quot;</span>.<span class="s2">&quot;T1&quot;</span> <span class="nb">set</span> <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;logmnr&#39;</span> where <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;tttt&#39;</span> and <span class="nv">ROWID</span> <span class="o">=</span> <span class="s1">&#39;AAAS0JAAFAAACi2AAA&#39;</span>;
+</span><span class='line'>update <span class="s2">&quot;HR&quot;</span>.<span class="s2">&quot;T1&quot;</span> <span class="nb">set</span> <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;tttt&#39;</span> where <span class="s2">&quot;NAME&quot;</span> <span class="o">=</span> <span class="s1">&#39;logmnr&#39;</span> and <span class="nv">ROWID</span> <span class="o">=</span> <span class="s1">&#39;AAAS0JAAFAAACi2AAA&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2219,302 +2478,6 @@ Z 上一页邮件
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/04/ru-he-shi-yong-gnupg/">如何使用GnuPG</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-04T07:15:00+00:00" pubdate data-updated="true">Jul 4<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>ubuntu下自带gpg软件
-产生公钥</p>
-
-<figure class='code'><figcaption><span>make public key  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --gen-key
-</span><span class='line'>gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.11; Copyright <span class="o">(</span>C<span class="o">)</span> 2010 Free Software Foundation, Inc.
-</span><span class='line'>This is free software: you are free to change and redistribute it.
-</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
-</span><span class='line'>
-</span><span class='line'>gpg: directory <span class="sb">`</span>/home/qiangfan/.gnupg<span class="s1">&#39; created</span>
-</span><span class='line'><span class="s1">gpg: new configuration file `/home/qiangfan/.gnupg/gpg.conf&#39;</span> created
-</span><span class='line'>gpg: WARNING: options in <span class="sb">`</span>/home/qiangfan/.gnupg/gpg.conf<span class="s1">&#39; are not yet active during this run</span>
-</span><span class='line'><span class="s1">gpg: keyring `/home/qiangfan/.gnupg/secring.gpg&#39;</span> created
-</span><span class='line'>gpg: keyring <span class="sb">`</span>/home/qiangfan/.gnupg/pubring.gpg<span class="s1">&#39; created</span>
-</span><span class='line'><span class="s1">Please select what kind of key you want:</span>
-</span><span class='line'><span class="s1">   (1) RSA and RSA (default)</span>
-</span><span class='line'><span class="s1">   (2) DSA and Elgamal</span>
-</span><span class='line'><span class="s1">   (3) DSA (sign only)</span>
-</span><span class='line'><span class="s1">   (4) RSA (sign only)</span>
-</span><span class='line'><span class="s1">Your selection? 2</span>
-</span><span class='line'><span class="s1">DSA keys may be between 1024 and 3072 bits long.</span>
-</span><span class='line'><span class="s1">What keysize do you want? (2048) 2048</span>
-</span><span class='line'><span class="s1">Requested keysize is 2048 bits</span>
-</span><span class='line'><span class="s1">Please specify how long the key should be valid.</span>
-</span><span class='line'><span class="s1">         0 = key does not expire</span>
-</span><span class='line'><span class="s1">      &lt;n&gt;  = key expires in n days</span>
-</span><span class='line'><span class="s1">      &lt;n&gt;w = key expires in n weeks</span>
-</span><span class='line'><span class="s1">      &lt;n&gt;m = key expires in n months</span>
-</span><span class='line'><span class="s1">      &lt;n&gt;y = key expires in n years</span>
-</span><span class='line'><span class="s1">Key is valid for? (0) 2y</span>
-</span><span class='line'><span class="s1">Key expires at Fri Jul  4 07:19:00 2014 UTC</span>
-</span><span class='line'><span class="s1">Is this correct? (y/N) y</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">You need a user ID to identify your key; the software constructs the user ID</span>
-</span><span class='line'><span class="s1">from the Real Name, Comment and Email Address in this form:</span>
-</span><span class='line'><span class="s1">    &quot;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">real name: justlooks</span>
-</span><span class='line'><span class="s1">Email address: justlooks@gmail.com</span>
-</span><span class='line'><span class="s1">Comment: my public key</span>
-</span><span class='line'><span class="s1">You selected this USER-ID:</span>
-</span><span class='line'><span class="s1">    &quot;justlooks (my public key) &lt;justlooks@gmail.com&gt;&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O</span>
-</span><span class='line'><span class="s1">You need a Passphrase to protect your secret key.</span>
-</span><span class='line'>
-</span><span class='line'><span class="s1">We need to generate a lot of random bytes. It is a good idea to perform</span>
-</span><span class='line'><span class="s1">some other action (type on the keyboard, move the mouse, utilize the</span>
-</span><span class='line'><span class="s1">disks) during the prime generation; this gives the random number</span>
-</span><span class='line'><span class="s1">generator a better chance to gain enough entropy.</span>
-</span><span class='line'><span class="s1">gpg: WARNING: some OpenPGP programs can&#39;</span>t handle a DSA key with this digest size
-</span><span class='line'>+++++.+++++...++++++++++++++++++++.+++++++++++++++++++++++++..+++++.+++++.+++++..+++++.++++++++++..+++++++++++++++..++++++++++++++++++++++++++++++...+++++&gt;.+++++&gt;..+++++.&gt;+++++............................&lt;+++++................+++++
-</span><span class='line'>We need to generate a lot of random bytes. It is a good idea to perform
-</span><span class='line'>some other action <span class="o">(</span><span class="nb">type </span>on the keyboard, move the mouse, utilize the
-</span><span class='line'>disks<span class="o">)</span> during the prime generation; this gives the random number
-</span><span class='line'>generator a better chance to gain enough entropy.
-</span><span class='line'>.++++++++++++++++++++.++++++++++++++++++++++++++++++++++++++++++++++++++.++++++++++..++++++++++++++++++++.+++++.++++++++++++++++++++.+++++.+++++++++++++++&gt;+++++.+++++&gt;...+++++&gt;+++++...+++++^^^
-</span><span class='line'>gpg: /home/qiangfan/.gnupg/trustdb.gpg: trustdb created
-</span><span class='line'>gpg: key 46A6011B marked as ultimately trusted
-</span><span class='line'>public and secret key created and signed.
-</span><span class='line'>
-</span><span class='line'>gpg: checking the trustdb
-</span><span class='line'>gpg: 3 marginal<span class="o">(</span>s<span class="o">)</span> needed, 1 <span class="nb">complete</span><span class="o">(</span>s<span class="o">)</span> needed, PGP trust model
-</span><span class='line'>gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-</span><span class='line'>gpg: next trustdb check due at 2014-07-04
-</span><span class='line'>pub   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
-</span><span class='line'>      Key <span class="nv">fingerprint</span> <span class="o">=</span> C75E 1093 E331 7904 D4EC  41CE BD3D 20F8 46A6 011B
-</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
-</span><span class='line'>sub   2048g/00EAAAAC 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$ </span>ls ~/.gnupg/
-</span><span class='line'>gpg.conf  pubring.gpg  pubring.gpg~  random_seed  secring.gpg  trustdb.gpg
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当遇到下列问题是可以通过cat bigfile >/dev/null让gpg继续工作</p>
-
-<pre><code>We need to generate a lot of random bytes. 
-</code></pre>
-
-<p>查看公钥</p>
-
-<figure class='code'><figcaption><span>view public key  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --list-keys
-</span><span class='line'>/home/qiangfan/.gnupg/pubring.gpg
-</span><span class='line'>---------------------------------
-</span><span class='line'>pub   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
-</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
-</span><span class='line'>sub   2048g/00EAAAAC 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>查看私钥</p>
-
-<figure class='code'><figcaption><span>view private key  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --list-secret-keys
-</span><span class='line'>/home/qiangfan/.gnupg/secring.gpg
-</span><span class='line'>---------------------------------
-</span><span class='line'>sec   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
-</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
-</span><span class='line'>ssb   2048g/00EAAAAC 2012-07-04
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>将公钥上传到服务器</p>
-
-<figure class='code'><figcaption><span>upload key  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --keyserver pgp.mit.edu --send-key 46A6011B
-</span><span class='line'>gpg: sending key 46A6011B to hkp server pgp.mit.edu
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>查询服务器上的公钥信息</p>
-
-<figure class='code'><figcaption><span>search public key in server  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --keyserver pgp.mit.edu --search-keys justlooks@gmail.com
-</span><span class='line'>gpg: searching <span class="k">for</span> <span class="s2">&quot;justlooks@gmail.com&quot;</span> from hkp server pgp.mit.edu
-</span><span class='line'><span class="o">(</span>1<span class="o">)</span>     justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
-</span><span class='line'>          2048 bit DSA key 46A6011B, created: 2012-07-04
-</span><span class='line'><span class="o">(</span>2<span class="o">)</span>     justlooks <span class="o">(</span>my key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
-</span><span class='line'>          1024 bit DSA key 2E08A6A1, created: 2009-04-18
-</span><span class='line'>Keys 1-2 of 2 <span class="k">for</span> <span class="s2">&quot;justlooks@gmail.com&quot;</span>.  Enter number<span class="o">(</span>s<span class="o">)</span>, N<span class="o">)</span>ext, or Q<span class="o">)</span>uit &gt; 1
-</span><span class='line'>gpg: requesting key 46A6011B from hkp server pgp.mit.edu
-</span><span class='line'>gpg: key 46A6011B: <span class="s2">&quot;justlooks (my public key) &lt;justlooks@gmail.com&gt;&quot;</span> not changed
-</span><span class='line'>gpg: Total number processed: 1
-</span><span class='line'>gpg:              unchanged: 1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>导入其他人的公钥</p>
-
-<figure class='code'><figcaption><span>get public key from other  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>pg --recv-keys 0xC9C40C31
-</span><span class='line'>pg: illegal option -- -recv-keys
-</span><span class='line'>pg: Usage: pg <span class="o">[</span>-number<span class="o">]</span> <span class="o">[</span>-p string<span class="o">]</span> <span class="o">[</span>-cefnrs<span class="o">]</span> <span class="o">[</span>+line<span class="o">]</span> <span class="o">[</span>+/pattern/<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
-</span><span class='line'>qiangfan@li96-129:~<span class="nv">$ </span>gpg --recv-keys 0xC9C40C31
-</span><span class='line'>gpg: requesting key C9C40C31 from hkp server keys.gnupg.net
-</span><span class='line'>gpg: key C9C40C31: public key <span class="s2">&quot;Justin R. Miller &lt;incanus@codesorcery.net&gt;&quot;</span> imported
-</span><span class='line'>gpg: 3 marginal<span class="o">(</span>s<span class="o">)</span> needed, 1 <span class="nb">complete</span><span class="o">(</span>s<span class="o">)</span> needed, PGP trust model
-</span><span class='line'>gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-</span><span class='line'>gpg: next trustdb check due at 2014-07-04
-</span><span class='line'>gpg: Total number processed: 1
-</span><span class='line'>gpg:               imported: 1
-</span><span class='line'><span class="c"># 查看钥匙圈</span>
-</span><span class='line'><span class="nv">$ </span>gpg --list-keys 0xC9C40C31
-</span><span class='line'>pub   1024D/C9C40C31 2001-05-25
-</span><span class='line'>uid                  Justin R. Miller &lt;incanus@codesorcery.net&gt;
-</span><span class='line'>sub   1024g/59FAB546 2001-05-25
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2530,6 +2493,10 @@ Z 上一页邮件
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
       </li>
     
@@ -2543,10 +2510,6 @@ Z 上一页邮件
     
       <li class="post">
         <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
       </li>
     
   </ul>

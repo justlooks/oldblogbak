@@ -9,7 +9,48 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="1. 首先配置getmail收信 安装getmail4 apt-get install getmail4 在非root用户目录下创建邮箱 mkdir -m 700 ~/Mail/inbox/{,tmp,new,cur} 创建配置文件 mkdir -p ~/.getmail;cd ~/. &hellip;">
+  <meta name="description" content="ubuntu下自带gpg软件
+产生公钥 make public key 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +108,302 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/04/ru-he-shi-yong-gnupg/">如何使用GnuPG</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-04T07:15:00+00:00" pubdate data-updated="true">Jul 4<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ubuntu下自带gpg软件
+产生公钥</p>
+
+<figure class='code'><figcaption><span>make public key  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --gen-key
+</span><span class='line'>gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.11; Copyright <span class="o">(</span>C<span class="o">)</span> 2010 Free Software Foundation, Inc.
+</span><span class='line'>This is free software: you are free to change and redistribute it.
+</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
+</span><span class='line'>
+</span><span class='line'>gpg: directory <span class="sb">`</span>/home/qiangfan/.gnupg<span class="s1">&#39; created</span>
+</span><span class='line'><span class="s1">gpg: new configuration file `/home/qiangfan/.gnupg/gpg.conf&#39;</span> created
+</span><span class='line'>gpg: WARNING: options in <span class="sb">`</span>/home/qiangfan/.gnupg/gpg.conf<span class="s1">&#39; are not yet active during this run</span>
+</span><span class='line'><span class="s1">gpg: keyring `/home/qiangfan/.gnupg/secring.gpg&#39;</span> created
+</span><span class='line'>gpg: keyring <span class="sb">`</span>/home/qiangfan/.gnupg/pubring.gpg<span class="s1">&#39; created</span>
+</span><span class='line'><span class="s1">Please select what kind of key you want:</span>
+</span><span class='line'><span class="s1">   (1) RSA and RSA (default)</span>
+</span><span class='line'><span class="s1">   (2) DSA and Elgamal</span>
+</span><span class='line'><span class="s1">   (3) DSA (sign only)</span>
+</span><span class='line'><span class="s1">   (4) RSA (sign only)</span>
+</span><span class='line'><span class="s1">Your selection? 2</span>
+</span><span class='line'><span class="s1">DSA keys may be between 1024 and 3072 bits long.</span>
+</span><span class='line'><span class="s1">What keysize do you want? (2048) 2048</span>
+</span><span class='line'><span class="s1">Requested keysize is 2048 bits</span>
+</span><span class='line'><span class="s1">Please specify how long the key should be valid.</span>
+</span><span class='line'><span class="s1">         0 = key does not expire</span>
+</span><span class='line'><span class="s1">      &lt;n&gt;  = key expires in n days</span>
+</span><span class='line'><span class="s1">      &lt;n&gt;w = key expires in n weeks</span>
+</span><span class='line'><span class="s1">      &lt;n&gt;m = key expires in n months</span>
+</span><span class='line'><span class="s1">      &lt;n&gt;y = key expires in n years</span>
+</span><span class='line'><span class="s1">Key is valid for? (0) 2y</span>
+</span><span class='line'><span class="s1">Key expires at Fri Jul  4 07:19:00 2014 UTC</span>
+</span><span class='line'><span class="s1">Is this correct? (y/N) y</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">You need a user ID to identify your key; the software constructs the user ID</span>
+</span><span class='line'><span class="s1">from the Real Name, Comment and Email Address in this form:</span>
+</span><span class='line'><span class="s1">    &quot;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">real name: justlooks</span>
+</span><span class='line'><span class="s1">Email address: justlooks@gmail.com</span>
+</span><span class='line'><span class="s1">Comment: my public key</span>
+</span><span class='line'><span class="s1">You selected this USER-ID:</span>
+</span><span class='line'><span class="s1">    &quot;justlooks (my public key) &lt;justlooks@gmail.com&gt;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O</span>
+</span><span class='line'><span class="s1">You need a Passphrase to protect your secret key.</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">We need to generate a lot of random bytes. It is a good idea to perform</span>
+</span><span class='line'><span class="s1">some other action (type on the keyboard, move the mouse, utilize the</span>
+</span><span class='line'><span class="s1">disks) during the prime generation; this gives the random number</span>
+</span><span class='line'><span class="s1">generator a better chance to gain enough entropy.</span>
+</span><span class='line'><span class="s1">gpg: WARNING: some OpenPGP programs can&#39;</span>t handle a DSA key with this digest size
+</span><span class='line'>+++++.+++++...++++++++++++++++++++.+++++++++++++++++++++++++..+++++.+++++.+++++..+++++.++++++++++..+++++++++++++++..++++++++++++++++++++++++++++++...+++++&gt;.+++++&gt;..+++++.&gt;+++++............................&lt;+++++................+++++
+</span><span class='line'>We need to generate a lot of random bytes. It is a good idea to perform
+</span><span class='line'>some other action <span class="o">(</span><span class="nb">type </span>on the keyboard, move the mouse, utilize the
+</span><span class='line'>disks<span class="o">)</span> during the prime generation; this gives the random number
+</span><span class='line'>generator a better chance to gain enough entropy.
+</span><span class='line'>.++++++++++++++++++++.++++++++++++++++++++++++++++++++++++++++++++++++++.++++++++++..++++++++++++++++++++.+++++.++++++++++++++++++++.+++++.+++++++++++++++&gt;+++++.+++++&gt;...+++++&gt;+++++...+++++^^^
+</span><span class='line'>gpg: /home/qiangfan/.gnupg/trustdb.gpg: trustdb created
+</span><span class='line'>gpg: key 46A6011B marked as ultimately trusted
+</span><span class='line'>public and secret key created and signed.
+</span><span class='line'>
+</span><span class='line'>gpg: checking the trustdb
+</span><span class='line'>gpg: 3 marginal<span class="o">(</span>s<span class="o">)</span> needed, 1 <span class="nb">complete</span><span class="o">(</span>s<span class="o">)</span> needed, PGP trust model
+</span><span class='line'>gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+</span><span class='line'>gpg: next trustdb check due at 2014-07-04
+</span><span class='line'>pub   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
+</span><span class='line'>      Key <span class="nv">fingerprint</span> <span class="o">=</span> C75E 1093 E331 7904 D4EC  41CE BD3D 20F8 46A6 011B
+</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
+</span><span class='line'>sub   2048g/00EAAAAC 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ </span>ls ~/.gnupg/
+</span><span class='line'>gpg.conf  pubring.gpg  pubring.gpg~  random_seed  secring.gpg  trustdb.gpg
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当遇到下列问题是可以通过cat bigfile >/dev/null让gpg继续工作</p>
+
+<pre><code>We need to generate a lot of random bytes. 
+</code></pre>
+
+<p>查看公钥</p>
+
+<figure class='code'><figcaption><span>view public key  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --list-keys
+</span><span class='line'>/home/qiangfan/.gnupg/pubring.gpg
+</span><span class='line'>---------------------------------
+</span><span class='line'>pub   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
+</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
+</span><span class='line'>sub   2048g/00EAAAAC 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看私钥</p>
+
+<figure class='code'><figcaption><span>view private key  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --list-secret-keys
+</span><span class='line'>/home/qiangfan/.gnupg/secring.gpg
+</span><span class='line'>---------------------------------
+</span><span class='line'>sec   2048D/46A6011B 2012-07-04 <span class="o">[</span>expires: 2014-07-04<span class="o">]</span>
+</span><span class='line'>uid                  justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
+</span><span class='line'>ssb   2048g/00EAAAAC 2012-07-04
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将公钥上传到服务器</p>
+
+<figure class='code'><figcaption><span>upload key  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --keyserver pgp.mit.edu --send-key 46A6011B
+</span><span class='line'>gpg: sending key 46A6011B to hkp server pgp.mit.edu
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查询服务器上的公钥信息</p>
+
+<figure class='code'><figcaption><span>search public key in server  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>gpg --keyserver pgp.mit.edu --search-keys justlooks@gmail.com
+</span><span class='line'>gpg: searching <span class="k">for</span> <span class="s2">&quot;justlooks@gmail.com&quot;</span> from hkp server pgp.mit.edu
+</span><span class='line'><span class="o">(</span>1<span class="o">)</span>     justlooks <span class="o">(</span>my public key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
+</span><span class='line'>          2048 bit DSA key 46A6011B, created: 2012-07-04
+</span><span class='line'><span class="o">(</span>2<span class="o">)</span>     justlooks <span class="o">(</span>my key<span class="o">)</span> &lt;justlooks@gmail.com&gt;
+</span><span class='line'>          1024 bit DSA key 2E08A6A1, created: 2009-04-18
+</span><span class='line'>Keys 1-2 of 2 <span class="k">for</span> <span class="s2">&quot;justlooks@gmail.com&quot;</span>.  Enter number<span class="o">(</span>s<span class="o">)</span>, N<span class="o">)</span>ext, or Q<span class="o">)</span>uit &gt; 1
+</span><span class='line'>gpg: requesting key 46A6011B from hkp server pgp.mit.edu
+</span><span class='line'>gpg: key 46A6011B: <span class="s2">&quot;justlooks (my public key) &lt;justlooks@gmail.com&gt;&quot;</span> not changed
+</span><span class='line'>gpg: Total number processed: 1
+</span><span class='line'>gpg:              unchanged: 1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>导入其他人的公钥</p>
+
+<figure class='code'><figcaption><span>get public key from other  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>pg --recv-keys 0xC9C40C31
+</span><span class='line'>pg: illegal option -- -recv-keys
+</span><span class='line'>pg: Usage: pg <span class="o">[</span>-number<span class="o">]</span> <span class="o">[</span>-p string<span class="o">]</span> <span class="o">[</span>-cefnrs<span class="o">]</span> <span class="o">[</span>+line<span class="o">]</span> <span class="o">[</span>+/pattern/<span class="o">]</span> <span class="o">[</span>files<span class="o">]</span>
+</span><span class='line'>qiangfan@li96-129:~<span class="nv">$ </span>gpg --recv-keys 0xC9C40C31
+</span><span class='line'>gpg: requesting key C9C40C31 from hkp server keys.gnupg.net
+</span><span class='line'>gpg: key C9C40C31: public key <span class="s2">&quot;Justin R. Miller &lt;incanus@codesorcery.net&gt;&quot;</span> imported
+</span><span class='line'>gpg: 3 marginal<span class="o">(</span>s<span class="o">)</span> needed, 1 <span class="nb">complete</span><span class="o">(</span>s<span class="o">)</span> needed, PGP trust model
+</span><span class='line'>gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+</span><span class='line'>gpg: next trustdb check due at 2014-07-04
+</span><span class='line'>gpg: Total number processed: 1
+</span><span class='line'>gpg:               imported: 1
+</span><span class='line'><span class="c"># 查看钥匙圈</span>
+</span><span class='line'><span class="nv">$ </span>gpg --list-keys 0xC9C40C31
+</span><span class='line'>pub   1024D/C9C40C31 2001-05-25
+</span><span class='line'>uid                  Justin R. Miller &lt;incanus@codesorcery.net&gt;
+</span><span class='line'>sub   1024g/59FAB546 2001-05-25
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -715,6 +1052,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
       </li>
     
@@ -728,10 +1069,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     
       <li class="post">
         <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/17/oraclebei-fen-hui-fu-ce-shi/">oracle备份恢复测试</a>
       </li>
     
   </ul>
