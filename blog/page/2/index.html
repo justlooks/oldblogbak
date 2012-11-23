@@ -9,48 +9,8 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="ubuntu下自带gpg软件
-产生公钥 make public key 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41 &hellip;">
+  <meta name="description" content="将gpg模板文件拷贝到用户目录 cp /usr/share/doc/mutt/examples/gpg.rc ~/.mutt.gpg.rc 在.muttrc文件中引用这个gpg模板文件 modify .muttrc 1
+source ~/.mutt.gpg.rc 编辑.mutt.gpg.rc文件, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -108,6 +68,63 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/04/muttpei-zhi-shi-yong-gpg/">Mutt配置使用gpg</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-04T08:36:00+00:00" pubdate data-updated="true">Jul 4<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>将gpg模板文件拷贝到用户目录</p>
+
+<pre><code>cp /usr/share/doc/mutt/examples/gpg.rc ~/.mutt.gpg.rc
+</code></pre>
+
+<p>在.muttrc文件中引用这个gpg模板文件</p>
+
+<figure class='code'><figcaption><span>modify .muttrc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">source</span> ~/.mutt.gpg.rc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑.mutt.gpg.rc文件,添加如下内容</p>
+
+<figure class='code'><figcaption><span>add content to .mutt.gpg.rc  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1052,6 +1069,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">关于oracle自增主键</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
       </li>
     
@@ -1065,10 +1086,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     
       <li class="post">
         <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
       </li>
     
   </ul>

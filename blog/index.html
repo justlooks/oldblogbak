@@ -9,8 +9,20 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="oracle提供了logminer工具,可以对online redo log或者archive log做方便的检视
-下面是工具使用的简单演示 使用logminer的条件是开启minimal level supplemental logging enable minimal level &hellip;">
+  <meta name="description" content="在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
+下面是实现的代码 auto_increment use seqence 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +80,105 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">关于oracle自增主键</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-23T01:19:00+00:00" pubdate data-updated="true">Nov 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
+下面是实现的代码</p>
+
+<figure class='code'><figcaption><span>auto_increment use seqence  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>drop table test1;
+</span><span class='line'>drop sequence myseq;
+</span><span class='line'>create table test1<span class="o">(</span>id number,name varchar2<span class="o">(</span>20<span class="o">))</span>;
+</span><span class='line'>create sequence myseq increment by 1 start with 1 maxvalue 999999 minvalue 1 nocache nocycle;
+</span><span class='line'>create or replace trigger test1_trg_b_i before insert on test1 <span class="k">for </span>each row
+</span><span class='line'>begin
+</span><span class='line'>  <span class="k">select </span>myseq.nextval into :new.id from dual;
+</span><span class='line'>end;
+</span><span class='line'>/
+</span><span class='line'>DECLARE
+</span><span class='line'> i number default 1;
+</span><span class='line'>BEGIN
+</span><span class='line'><span class="k">for </span>i in 1..1000 loop
+</span><span class='line'>  insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;aaa&#39;</span><span class="o">)</span>;
+</span><span class='line'>end loop;
+</span><span class='line'>END;
+</span><span class='line'>/
+</span><span class='line'><span class="k">select </span>count<span class="o">(</span>distinct<span class="o">(</span>id<span class="o">))</span> from test1;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外一个列子是实现MYSQL中last_insert_id调用的oracle实现</p>
+
+<figure class='code'><figcaption><span>last insert id  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span>serveroutput on
+</span><span class='line'><span class="nb">declare</span>
+</span><span class='line'><span class="nb">  </span>myid test1.id%TYPE;
+</span><span class='line'>BEGIN
+</span><span class='line'>insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;bbb&#39;</span><span class="o">)</span> RETURNING id into myid;
+</span><span class='line'>DBMS_OUTPUT.put_line<span class="o">(</span><span class="s1">&#39;result : &#39;</span> <span class="o">||</span> myid<span class="o">)</span>;
+</span><span class='line'>END;
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2421,63 +2532,6 @@ Z 上一页邮件
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/04/muttpei-zhi-shi-yong-gpg/">Mutt配置使用gpg</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-04T08:36:00+00:00" pubdate data-updated="true">Jul 4<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>将gpg模板文件拷贝到用户目录</p>
-
-<pre><code>cp /usr/share/doc/mutt/examples/gpg.rc ~/.mutt.gpg.rc
-</code></pre>
-
-<p>在.muttrc文件中引用这个gpg模板文件</p>
-
-<figure class='code'><figcaption><span>modify .muttrc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">source</span> ~/.mutt.gpg.rc
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑.mutt.gpg.rc文件,添加如下内容</p>
-
-<figure class='code'><figcaption><span>add content to .mutt.gpg.rc  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2493,6 +2547,10 @@ Z 上一页邮件
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">关于oracle自增主键</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
       </li>
     
@@ -2506,10 +2564,6 @@ Z 上一页邮件
     
       <li class="post">
         <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/">oracle 11G安装示例数据库方法</a>
       </li>
     
   </ul>

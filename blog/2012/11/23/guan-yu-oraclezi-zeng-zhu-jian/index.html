@@ -5,12 +5,24 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>test - Strawhouse</title>
+  <title>关于oracle自增主键 - Strawhouse</title>
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="内嵌代码 perl&#8217;s &#8220;hello world&#8221; 1
-perl -e &#39;print &quot;hello world\n&quot;&#39; 内嵌gist tag perl -e 'print &quot;hello world&quot;' &hellip;">
+  <meta name="description" content="在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
+下面是实现的代码 auto_increment use seqence 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +31,7 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; 内嵌gist tag perl -e 'print 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/2012/06/07/test/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +83,7 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; 内嵌gist tag perl -e 'print 
   
   <header>
     
-      <h1 class="entry-title">Test</h1>
+      <h1 class="entry-title">关于oracle自增主键</h1>
     
     
       <p class="meta">
@@ -87,37 +99,77 @@ perl -e &#39;print &quot;hello world\n&quot;&#39; 内嵌gist tag perl -e 'print 
   
 
 
-<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+<time datetime="2012-11-23T01:19:00+00:00" pubdate data-updated="true">Nov 23<span>rd</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>内嵌代码</p>
+<div class="entry-content"><p>在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
+下面是实现的代码</p>
 
-<figure class='code'><figcaption><span>perl&#8217;s &#8220;hello world&#8221;  </span></figcaption>
+<figure class='code'><figcaption><span>auto_increment use seqence  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="n">perl</span> <span class="o">-</span><span class="n">e</span> <span class="s">&#39;print &quot;hello world\n&quot;&#39;</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>drop table test1;
+</span><span class='line'>drop sequence myseq;
+</span><span class='line'>create table test1<span class="o">(</span>id number,name varchar2<span class="o">(</span>20<span class="o">))</span>;
+</span><span class='line'>create sequence myseq increment by 1 start with 1 maxvalue 999999 minvalue 1 nocache nocycle;
+</span><span class='line'>create or replace trigger test1_trg_b_i before insert on test1 <span class="k">for </span>each row
+</span><span class='line'>begin
+</span><span class='line'>  <span class="k">select </span>myseq.nextval into :new.id from dual;
+</span><span class='line'>end;
+</span><span class='line'>/
+</span><span class='line'>DECLARE
+</span><span class='line'> i number default 1;
+</span><span class='line'>BEGIN
+</span><span class='line'><span class="k">for </span>i in 1..1000 loop
+</span><span class='line'>  insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;aaa&#39;</span><span class="o">)</span>;
+</span><span class='line'>end loop;
+</span><span class='line'>END;
+</span><span class='line'>/
+</span><span class='line'><span class="k">select </span>count<span class="o">(</span>distinct<span class="o">(</span>id<span class="o">))</span> from test1;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外一个列子是实现MYSQL中last_insert_id调用的oracle实现</p>
+
+<figure class='code'><figcaption><span>last insert id  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span>serveroutput on
+</span><span class='line'><span class="nb">declare</span>
+</span><span class='line'><span class="nb">  </span>myid test1.id%TYPE;
+</span><span class='line'>BEGIN
+</span><span class='line'>insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;bbb&#39;</span><span class="o">)</span> RETURNING id into myid;
+</span><span class='line'>DBMS_OUTPUT.put_line<span class="o">(</span><span class="s1">&#39;result : &#39;</span> <span class="o">||</span> myid<span class="o">)</span>;
+</span><span class='line'>END;
 </span></code></pre></td></tr></table></div></figure>
 
 
 
-
-<!--more-->
-
-
-<p>内嵌gist tag</p>
-
-<div><script src='https://gist.github.com/2894455.js?file='></script>
-<noscript><pre><code>perl -e 'print &quot;hello world&quot;'</code></pre></noscript></div>
-
-
-<p>内嵌摘要
-<span class='pullquote-right' data-pullquote='surround it like this'>
-Surround your paragraph with the pull quote tags. Then when you come to
-the text you want to pull, surround it like this and that&#8217;s all there is to it.
-</span></p>
 </div>
 
 
@@ -140,7 +192,7 @@ the text you want to pull, surround it like this and that&#8217;s all there is t
   
 
 
-<time datetime="2012-06-07T09:23:00+00:00" pubdate data-updated="true">Jun 7<span>th</span>, 2012</time>
+<time datetime="2012-11-23T01:19:00+00:00" pubdate data-updated="true">Nov 23<span>rd</span>, 2012</time>
       
 
 
@@ -148,7 +200,7 @@ the text you want to pull, surround it like this and that&#8217;s all there is t
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/06/07/test/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/06/07/test/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/" >Tweet</a>
   
   
   
@@ -157,10 +209,8 @@ the text you want to pull, surround it like this and that&#8217;s all there is t
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/06/07/xiu-gai-dao-hang-lan/" title="Previous Post: Configure octopress outlook">&laquo; Configure octopress outlook</a>
+        <a class="basic-alignment left" href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/" title="Previous Post: 使用logminer挖掘redo log">&laquo; 使用logminer挖掘redo log</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/07/03/muttpei-zhi/" title="Next Post: mutt配置">mutt配置 &raquo;</a>
       
     </p>
   </footer>

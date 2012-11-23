@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-11-02T01:03:08+00:00</updated>
+  <updated>2012-11-23T01:31:25+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[关于oracle自增主键]]></title>
+    <link href="http://justlooks.github.com/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/"/>
+    <updated>2012-11-23T01:19:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian</id>
+    <content type="html"><![CDATA[<p>在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
+下面是实现的代码</p>
+
+<figure class='code'><figcaption><span>auto_increment use seqence  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>drop table test1;
+</span><span class='line'>drop sequence myseq;
+</span><span class='line'>create table test1<span class="o">(</span>id number,name varchar2<span class="o">(</span>20<span class="o">))</span>;
+</span><span class='line'>create sequence myseq increment by 1 start with 1 maxvalue 999999 minvalue 1 nocache nocycle;
+</span><span class='line'>create or replace trigger test1_trg_b_i before insert on test1 <span class="k">for </span>each row
+</span><span class='line'>begin
+</span><span class='line'>  <span class="k">select </span>myseq.nextval into :new.id from dual;
+</span><span class='line'>end;
+</span><span class='line'>/
+</span><span class='line'>DECLARE
+</span><span class='line'> i number default 1;
+</span><span class='line'>BEGIN
+</span><span class='line'><span class="k">for </span>i in 1..1000 loop
+</span><span class='line'>  insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;aaa&#39;</span><span class="o">)</span>;
+</span><span class='line'>end loop;
+</span><span class='line'>END;
+</span><span class='line'>/
+</span><span class='line'><span class="k">select </span>count<span class="o">(</span>distinct<span class="o">(</span>id<span class="o">))</span> from test1;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>另外一个列子是实现MYSQL中last_insert_id调用的oracle实现</p>
+
+<figure class='code'><figcaption><span>last insert id  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span>serveroutput on
+</span><span class='line'><span class="nb">declare</span>
+</span><span class='line'><span class="nb">  </span>myid test1.id%TYPE;
+</span><span class='line'>BEGIN
+</span><span class='line'>insert into test1<span class="o">(</span>name<span class="o">)</span> values<span class="o">(</span><span class="s1">&#39;bbb&#39;</span><span class="o">)</span> RETURNING id into myid;
+</span><span class='line'>DBMS_OUTPUT.put_line<span class="o">(</span><span class="s1">&#39;result : &#39;</span> <span class="o">||</span> myid<span class="o">)</span>;
+</span><span class='line'>END;
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用logminer挖掘redo log]]></title>
