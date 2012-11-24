@@ -9,8 +9,8 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="在MYSQL中自增列可以用auto_increment这个列属性实现,而在oracle下面没有,但是oracle有个sequence可以通过触发器间接实现自增功能
-下面是实现的代码 auto_increment use seqence 1
+  <meta name="description" content="删除某个用户的所有连接会话,需要查询v$session视图得到sid和serial,来调用kill命令
+下面是封装脚本 kill all connect of one user 1
 2
 3
 4
@@ -22,7 +22,17 @@
 10
 11
 12
-13 &hellip;">
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +90,133 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/">Oracle删除某个用户所有连接脚本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-24T07:02:00+00:00" pubdate data-updated="true">Nov 24<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>删除某个用户的所有连接会话,需要查询v$session视图得到sid和serial,来调用kill命令
+下面是封装脚本</p>
+
+<figure class='code'><figcaption><span>kill all connect of one user  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>PROMPT Enter username which u want to kick
+</span><span class='line'>ACCEPT KUSER PROMPT <span class="s1">&#39;User: &#39;</span>
+</span><span class='line'><span class="nb">set </span>serveroutput on
+</span><span class='line'>DECLARE
+</span><span class='line'>    TYPE kicktyp IS REF CURSOR;
+</span><span class='line'>    TYPE sidlist IS TABLE OF NUMBER;
+</span><span class='line'>    TYPE seriallist IS TABLE OF NUMBER;
+</span><span class='line'>    kick_cur kicktyp;
+</span><span class='line'>    sidarr sidlist;
+</span><span class='line'>    serialarr seriallist;
+</span><span class='line'>    kstr VARCHAR2<span class="o">(</span>200<span class="o">)</span>;
+</span><span class='line'>BEGIN
+</span><span class='line'>   OPEN kick_cur FOR
+</span><span class='line'>        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;&amp;KUSER&#39;</span><span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>        FETCH kick_cur BULK COLLECT INTO sidarr,serialarr;
+</span><span class='line'>        CLOSE kick_cur;
+</span><span class='line'>        FOR i IN sidarr.FIRST .. sidarr.LAST
+</span><span class='line'>        LOOP
+</span><span class='line'>          DBMS_OUTPUT.put_line<span class="o">(</span><span class="s1">&#39;i find sid &#39;</span><span class="o">||</span>sidarr<span class="o">(</span>i<span class="o">)||</span><span class="s1">&#39; serial# &#39;</span><span class="o">||</span>serialarr<span class="o">(</span>i<span class="o">)||</span><span class="s1">&#39; should close!&#39;</span><span class="o">)</span>;
+</span><span class='line'>          kstr:<span class="o">=</span><span class="s1">&#39;ALTER SYSTEM KILL SESSION &#39;</span><span class="o">||</span>q<span class="s1">&#39;{&#39;</span><span class="o">}</span><span class="s1">&#39;||sidarr(i)||&#39;</span>,<span class="s1">&#39;||serialarr(i)||q&#39;</span><span class="o">{</span><span class="s1">&#39;}&#39;</span>;
+</span><span class='line'>          execute immediate kstr;
+</span><span class='line'>        END LOOP;
+</span><span class='line'>END;
+</span><span class='line'>/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下面是执行效果</p>
+
+<figure class='code'><figcaption><span>execute script  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; @/home/oracle/scripts/kick_user.ora
+</span><span class='line'>Enter username which u want to kick
+</span><span class='line'>User: bm_user
+</span><span class='line'>old  12:        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;&amp;KUSER&#39;</span><span class="o">)</span>;
+</span><span class='line'>new  12:        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;bm_user&#39;</span><span class="o">)</span>;
+</span><span class='line'>i find sid 154 serial# 109 should close!
+</span><span class='line'>
+</span><span class='line'>SQL&gt; conn bm_user/123456
+</span><span class='line'>Connected.
+</span><span class='line'>SQL&gt; <span class="k">select </span>userenv<span class="o">(</span><span class="s1">&#39;sessionid&#39;</span><span class="o">)</span> from dual;
+</span><span class='line'><span class="k">select </span>userenv<span class="o">(</span><span class="s1">&#39;sessionid&#39;</span><span class="o">)</span> from dual
+</span><span class='line'>*
+</span><span class='line'>ERROR at line 1:
+</span><span class='line'>ORA-00028: your session has been killed
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2485,53 +2622,6 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/07/05/shi-yong-mutt/">使用mutt</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-07-05T06:39:00+00:00" pubdate data-updated="true">Jul 5<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>邮件浏览
-k 指向上一条邮件
-j 指向下一条邮件
-z 下一页邮件
-Z 上一页邮件
-* 第一条邮件
-= 最后一条邮件</p>
-
-<p>批量标记执行动作
-在邮件列表界面对需要标记的邮件摁&#8221;t&#8221;打上标记,然后摁&#8221;;d&#8221;删除,再摁&#8221;$&#8221;执行删除动作
-如果是&#8221;T&#8221;则输入需要打标记的匹配邮件的规则,比如对邮件标题中含有Newsletter的邮件打上标记删除则是
-摁&#8221;T&#8221;然后输入&#8221;~h Newsletter&#8221;,然后在摁&#8221;;d&#8221;,最后执行动作按&#8221;$&#8221;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2547,6 +2637,10 @@ Z 上一页邮件
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/">oracle删除某个用户所有连接脚本</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">关于oracle自增主键</a>
       </li>
     
@@ -2560,10 +2654,6 @@ Z 上一页邮件
     
       <li class="post">
         <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">手动创建oracle数据库</a>
       </li>
     
   </ul>

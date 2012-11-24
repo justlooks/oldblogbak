@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-11-23T01:31:25+00:00</updated>
+  <updated>2012-11-24T07:08:59+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[oracle删除某个用户所有连接脚本]]></title>
+    <link href="http://justlooks.github.com/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/"/>
+    <updated>2012-11-24T07:02:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben</id>
+    <content type="html"><![CDATA[<p>删除某个用户的所有连接会话,需要查询v$session视图得到sid和serial,来调用kill命令
+下面是封装脚本</p>
+
+<figure class='code'><figcaption><span>kill all connect of one user  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>PROMPT Enter username which u want to kick
+</span><span class='line'>ACCEPT KUSER PROMPT <span class="s1">&#39;User: &#39;</span>
+</span><span class='line'><span class="nb">set </span>serveroutput on
+</span><span class='line'>DECLARE
+</span><span class='line'>    TYPE kicktyp IS REF CURSOR;
+</span><span class='line'>    TYPE sidlist IS TABLE OF NUMBER;
+</span><span class='line'>    TYPE seriallist IS TABLE OF NUMBER;
+</span><span class='line'>    kick_cur kicktyp;
+</span><span class='line'>    sidarr sidlist;
+</span><span class='line'>    serialarr seriallist;
+</span><span class='line'>    kstr VARCHAR2<span class="o">(</span>200<span class="o">)</span>;
+</span><span class='line'>BEGIN
+</span><span class='line'>   OPEN kick_cur FOR
+</span><span class='line'>        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;&amp;KUSER&#39;</span><span class="o">)</span>;
+</span><span class='line'>
+</span><span class='line'>        FETCH kick_cur BULK COLLECT INTO sidarr,serialarr;
+</span><span class='line'>        CLOSE kick_cur;
+</span><span class='line'>        FOR i IN sidarr.FIRST .. sidarr.LAST
+</span><span class='line'>        LOOP
+</span><span class='line'>          DBMS_OUTPUT.put_line<span class="o">(</span><span class="s1">&#39;i find sid &#39;</span><span class="o">||</span>sidarr<span class="o">(</span>i<span class="o">)||</span><span class="s1">&#39; serial# &#39;</span><span class="o">||</span>serialarr<span class="o">(</span>i<span class="o">)||</span><span class="s1">&#39; should close!&#39;</span><span class="o">)</span>;
+</span><span class='line'>          kstr:<span class="o">=</span><span class="s1">&#39;ALTER SYSTEM KILL SESSION &#39;</span><span class="o">||</span>q<span class="s1">&#39;{&#39;</span><span class="o">}</span><span class="s1">&#39;||sidarr(i)||&#39;</span>,<span class="s1">&#39;||serialarr(i)||q&#39;</span><span class="o">{</span><span class="s1">&#39;}&#39;</span>;
+</span><span class='line'>          execute immediate kstr;
+</span><span class='line'>        END LOOP;
+</span><span class='line'>END;
+</span><span class='line'>/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下面是执行效果</p>
+
+<figure class='code'><figcaption><span>execute script  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; @/home/oracle/scripts/kick_user.ora
+</span><span class='line'>Enter username which u want to kick
+</span><span class='line'>User: bm_user
+</span><span class='line'>old  12:        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;&amp;KUSER&#39;</span><span class="o">)</span>;
+</span><span class='line'>new  12:        <span class="k">select </span>sid,serial# from v<span class="nv">$session</span> where <span class="nv">username</span><span class="o">=</span>UPPER<span class="o">(</span><span class="s1">&#39;bm_user&#39;</span><span class="o">)</span>;
+</span><span class='line'>i find sid 154 serial# 109 should close!
+</span><span class='line'>
+</span><span class='line'>SQL&gt; conn bm_user/123456
+</span><span class='line'>Connected.
+</span><span class='line'>SQL&gt; <span class="k">select </span>userenv<span class="o">(</span><span class="s1">&#39;sessionid&#39;</span><span class="o">)</span> from dual;
+</span><span class='line'><span class="k">select </span>userenv<span class="o">(</span><span class="s1">&#39;sessionid&#39;</span><span class="o">)</span> from dual
+</span><span class='line'>*
+</span><span class='line'>ERROR at line 1:
+</span><span class='line'>ORA-00028: your session has been killed
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[关于oracle自增主键]]></title>
