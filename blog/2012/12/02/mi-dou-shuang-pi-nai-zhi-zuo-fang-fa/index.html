@@ -5,12 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>手动创建oracle数据库 - Strawhouse</title>
+  <title>蜜豆双皮奶制作方法 - Strawhouse</title>
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
-下面我来演示下麻烦的手动创建过程 指定连接的SID export ORACLE_SID=mydb 创建启动的参数文件 vi $ORACLE_HOME/dbs/initmydb.ora 输入如下的内容 db_name &hellip;">
+  <meta name="description" content="首先是蜜豆的做法： 1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
+2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
+3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
+4. 烧到水快干了就做好了 下面是双皮奶的做法： 1. 200ML牛奶，小火煮到快开不开状态， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +73,7 @@
   
   <header>
     
-      <h1 class="entry-title">手动创建oracle数据库</h1>
+      <h1 class="entry-title">蜜豆双皮奶制作方法</h1>
     
     
       <p class="meta">
@@ -87,7 +89,7 @@
   
 
 
-<time datetime="2012-10-22T03:16:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+<time datetime="2012-12-02T12:35:00+00:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -96,132 +98,28 @@
   </header>
 
 
-<div class="entry-content"><p>一般我们创建数据库使用的是dbca,无论是GUI还是命令行,这个工具还是比较方便的
-下面我来演示下麻烦的手动创建过程</p>
+<div class="entry-content"><p><strong>首先是蜜豆的做法：</strong></p>
 
-<p>指定连接的SID</p>
-
-<pre><code>export ORACLE_SID=mydb
+<pre><code>1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
+2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
+3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
+4. 烧到水快干了就做好了
 </code></pre>
 
-<p>创建启动的参数文件</p>
+<hr />
 
-<pre><code>vi $ORACLE_HOME/dbs/initmydb.ora
+<p><strong>下面是双皮奶的做法：</strong></p>
+
+<pre><code>1. 200ML牛奶，小火煮到快开不开状态，倒入碗中放冰箱凉出奶皮
+2. 1个鸡蛋分出蛋清，打碎加入10G糖
+3. 将牛奶倒入蛋清混合均匀（奶皮留原来碗里）
+4. 将3中混合物倒回碗里，隔水蒸10分钟
+5. 放凉加蜜豆，功成
 </code></pre>
 
-<p>输入如下的内容</p>
+<p>糖不需要太多，甜味靠蜜豆，双皮奶嫩滑有浓郁的奶味，蜜豆咬起来非常软，很好吃</p>
 
-<pre><code>db_name=mydb
-db_files = 80
-db_file_multiblock_read_count = 8  
-db_block_buffers = 100
-shared_pool_size = 62198988
-log_checkpoint_interval = 10000processes = 50
-parallel_max_servers = 5  
-log_buffer = 32768
-max_dump_file_size = 10240 
-global_names = TRUE
-control_files = ‘/opt/oracle/app/oracle/admin/mydb/ora_control1.dbf’,'/opt/oracle/app/oracle/admin/mydb/ora_control2.dbf’
-background_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/bdump’
-user_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/udump’
-core_dump_dest = ‘/opt/oracle/app/oracle/admin/mydb/cdump’
-db_writer_processes = 3
-undo_management=’AUTO’
-undo_tablespace=’undo’
-</code></pre>
-
-<p>连接数据库</p>
-
-<pre><code>sqlplus / as sysdba
-</code></pre>
-
-<p>创建服务器参数文件</p>
-
-<pre><code>SQL&gt; CREATE SPFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/spfilemydb.ora’ 
-2  FROM PFILE=’/opt/oracle/app/oracle/product/10.2.0/db_1/dbs/initmydb.ora’;
-</code></pre>
-
-<p>打开数据库实例</p>
-
-<pre><code>SQL&gt; startup nomount
-ORACLE instance started.
-
-Total System Global Area  117440512 bytes
-Fixed Size                  1218004 bytes
-Variable Size              58722860 bytes
-Database Buffers           50331648 bytes
-Redo Buffers                7168000 bytes
-</code></pre>
-
-<p>创建数据库目录和dump日志目录</p>
-
-<pre><code>mkdir /opt/oracle/app/oracle/oradata/mydb
-mkdir -p /opt/oracle/app/oracle/admin/mydb/{u,c,b}dump
-</code></pre>
-
-<p>创建数据库 编辑文件</p>
-
-<pre><code>vi /tmp/cdb.sql
-</code></pre>
-
-<p>填入下列内容</p>
-
-<pre><code>CREATE DATABASE mydb
-USER SYS IDENTIFIED BY Myss123456
-USER SYSTEM IDENTIFIED BY Myss123456
-LOGFILE GROUP 1 (‘/opt/oracle/app/oracle/oradata/mydb/redo01.log’) SIZE 100M,
-GROUP 2 (‘/opt/oracle/app/oracle/oradata/mydb/redo02.log’) SIZE 100M,
-GROUP 3 (‘/opt/oracle/app/oracle/oradata/mydb/redo03.log’) SIZE 100M
-MAXLOGFILES 5
-MAXLOGMEMBERS 5
-MAXLOGHISTORY 1
-MAXDATAFILES 100
-MAXINSTANCES 1
-CHARACTER SET US7ASCII
-NATIONAL CHARACTER SET AL16UTF16
-DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/system01.dbf’ SIZE 325M REUSE
-EXTENT MANAGEMENT LOCAL
-SYSAUX DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/sysaux01.dbf’ SIZE 325M REUSE
-DEFAULT TABLESPACE users
-DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/user01.dbf’ SIZE 500M REUSE
-AUTOEXTEND ON MAXSIZE UNLIMITED
-DEFAULT TEMPORARY TABLESPACE tempts1
-TEMPFILE ‘/opt/oracle/app/oracle/oradata/mydb/temp01.dbf’
-SIZE 20M REUSE
-UNDO TABLESPACE undo
-DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/undotbs01.dbf’
-SIZE 200M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
-</code></pre>
-
-<p>EXTENT MANAGEMENT LOCAL 表示表空间管理为local manage形式</p>
-
-<p>然后执行</p>
-
-<pre><code>SQL&gt; @/tmp/cdb.sql
-Database created.
-</code></pre>
-
-<p>创建用户空间和索引空间</p>
-
-<pre><code>SQL&gt; CREATE TABLESPACE apps_tbs LOGGING
-2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/apps01.dbf’
-3 SIZE 300M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
-4 EXTENT MANAGEMENT LOCAL;
-
-SQL&gt; CREATE TABLESPACE indx_tbs LOGGING
-2 DATAFILE ‘/opt/oracle/app/oracle/oradata/mydb/indx01.dbf’
-3 SIZE 100M REUSE AUTOEXTEND ON NEXT 1280K MAXSIZE UNLIMITED
-4 EXTENT MANAGEMENT LOCAL;  
-</code></pre>
-
-<p>LOGGING选项表示该表空间的数据变更记录到redo日志中</p>
-
-<p>创建数据字典</p>
-
-<pre><code>SQL&gt; @?/rdbms/admin/catalog.sql
-SQL&gt; @?/rdbms/admin/catproc.sql
-SQL&gt; @?/sqlplus/admin/pupbld.sql
-</code></pre>
+<p><img src="http://farm9.staticflickr.com/8067/8236700191_9260fe575b_m.jpg" title="好吃的蜜豆双皮奶" alt="我的图片" /></p>
 </div>
 
 
@@ -244,12 +142,12 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
   
 
 
-<time datetime="2012-10-22T03:16:00+00:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+<time datetime="2012-12-02T12:35:00+00:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/oracle/'>oracle</a>
+    <a class='category' href='/blog/categories/food/'>food</a>
   
 </span>
 
@@ -258,7 +156,7 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/" >Tweet</a>
   
   
   
@@ -267,10 +165,8 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/10/22/oracle-11gan-zhuang-shi-li-shu-ju-ku-fang-fa/" title="Previous Post: oracle 11G安装示例数据库方法">&laquo; oracle 11G安装示例数据库方法</a>
+        <a class="basic-alignment left" href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/" title="Previous Post: oracle删除某个用户所有连接脚本">&laquo; oracle删除某个用户所有连接脚本</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/" title="Next Post: 关于RAC grid用户配置设置的小陷阱">关于RAC grid用户配置设置的小陷阱 &raquo;</a>
       
     </p>
   </footer>
@@ -370,8 +266,8 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/';
-        var disqus_url = 'http://justlooks.github.com/blog/2012/10/22/shou-dong-chuang-jian-oracleshu-ju-ku/';
+        var disqus_identifier = 'http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/';
+        var disqus_url = 'http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/';
         var disqus_script = 'embed.js';
       
     (function () {

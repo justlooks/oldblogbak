@@ -9,14 +9,10 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="邮件浏览
-k 指向上一条邮件
-j 指向下一条邮件
-z 下一页邮件
-Z 上一页邮件
-* 第一条邮件
-= 最后一条邮件 批量标记执行动作
-在邮件列表界面对需要标记的邮件摁&#8221;t&#8221;打上标记,然后摁&#8221;;d&#8221;删除,再摁&#8221;$&#8221;执行删除动作 &hellip;">
+  <meta name="description" content="首先安装vpn软件 # apt-get install pptpd 编辑文件 content of /etc/pptpd.conf 1
+2
+localip 192.168.0.1
+remoteip 192.168.0.234-238,192.168.0.245 content of /etc/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -74,6 +70,138 @@ Z 上一页邮件
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">Ubuntu设置vpn</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
+        
+         | <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>首先安装vpn软件</p>
+
+<pre><code># apt-get install pptpd
+</code></pre>
+
+<p>编辑文件</p>
+
+<figure class='code'><figcaption><span>content of /etc/pptpd.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>localip 192.168.0.1
+</span><span class='line'>remoteip 192.168.0.234-238,192.168.0.245
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>content of /etc/ppp/chap-secrets  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>username pptpd   password     *
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>content of /etc/ppp/pptpd-options  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ms-dns 8.8.8.8
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打开转发</p>
+
+<figure class='code'><figcaption><span>content of /etc/sysctl.conf  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>net.ipv4.ip_forward<span class="o">=</span>1
+</span><span class='line'>net.ipv6.conf.all.forwarding<span class="o">=</span>1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>并使其生效</p>
+
+<pre><code># sysctl -p
+</code></pre>
+
+<p>配置ufw</p>
+
+<figure class='code'><figcaption><span>content of /etc/default/ufw  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#DEFAULT_FORWARD_POLICY=&quot;DROP&quot;</span>
+</span><span class='line'><span class="nv">DEFAULT_FORWARD_POLICY</span><span class="o">=</span><span class="s2">&quot;ACCEPT&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在开头注释下紧接下列内容</p>
+
+<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>*nat
+</span><span class='line'>:POSTROUTING ACCEPT <span class="o">[</span>0:0<span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+</span><span class='line'>
+</span><span class='line'>COMMIT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在filter section下加入如下内容</p>
+
+<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>-A ufw-before-input -i ppp+ -j ACCEPT
+</span><span class='line'>-A ufw-before-output -i ppp+ -j ACCEPT
+</span><span class='line'>-A ufw-before-forward -s 192.168.0.0/24 -j ACCEPT
+</span><span class='line'>-A ufw-before-forward -d 192.168.0.0/24 -j ACCEPT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后重新启动ufw并且启动pptpd服务</p>
+
+<pre><code># ufw disable &amp;&amp; ufw enable
+# /etc/init.d/pptpd start
+</code></pre>
+
+<p>测试能够正常连接</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1138,6 +1266,10 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">蜜豆双皮奶制作方法</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/">oracle删除某个用户所有连接脚本</a>
       </li>
     
@@ -1151,10 +1283,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
     
       <li class="post">
         <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
       </li>
     
   </ul>

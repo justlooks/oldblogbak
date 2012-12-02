@@ -9,30 +9,10 @@
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="删除某个用户的所有连接会话,需要查询v$session视图得到sid和serial,来调用kill命令
-下面是封装脚本 kill all connect of one user 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23 &hellip;">
+  <meta name="description" content="首先是蜜豆的做法： 1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
+2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
+3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
+4. 烧到水快干了就做好了 下面是双皮奶的做法： 1. 200ML牛奶，小火煮到快开不开状态， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -90,6 +70,65 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">蜜豆双皮奶制作方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-02T12:35:00+00:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
+        
+         | <a href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><strong>首先是蜜豆的做法：</strong></p>
+
+<pre><code>1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
+2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
+3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
+4. 烧到水快干了就做好了
+</code></pre>
+
+<hr />
+
+<p><strong>下面是双皮奶的做法：</strong></p>
+
+<pre><code>1. 200ML牛奶，小火煮到快开不开状态，倒入碗中放冰箱凉出奶皮
+2. 1个鸡蛋分出蛋清，打碎加入10G糖
+3. 将牛奶倒入蛋清混合均匀（奶皮留原来碗里）
+4. 将3中混合物倒回碗里，隔水蒸10分钟
+5. 放凉加蜜豆，功成
+</code></pre>
+
+<p>糖不需要太多，甜味靠蜜豆，双皮奶嫩滑有浓郁的奶味，蜜豆咬起来非常软，很好吃</p>
+
+<p><img src="http://farm9.staticflickr.com/8067/8236700191_9260fe575b_m.jpg" title="好吃的蜜豆双皮奶" alt="我的图片" /></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2510,138 +2549,6 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/09/22/ubuntushe-zhi-vpn/">Ubuntu设置vpn</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-09-22T05:36:00+00:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2012</time>
-        
-         | <a href="/blog/2012/09/22/ubuntushe-zhi-vpn/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>首先安装vpn软件</p>
-
-<pre><code># apt-get install pptpd
-</code></pre>
-
-<p>编辑文件</p>
-
-<figure class='code'><figcaption><span>content of /etc/pptpd.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>localip 192.168.0.1
-</span><span class='line'>remoteip 192.168.0.234-238,192.168.0.245
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>content of /etc/ppp/chap-secrets  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>username pptpd   password     *
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span>content of /etc/ppp/pptpd-options  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ms-dns 8.8.8.8
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打开转发</p>
-
-<figure class='code'><figcaption><span>content of /etc/sysctl.conf  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>net.ipv4.ip_forward<span class="o">=</span>1
-</span><span class='line'>net.ipv6.conf.all.forwarding<span class="o">=</span>1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>并使其生效</p>
-
-<pre><code># sysctl -p
-</code></pre>
-
-<p>配置ufw</p>
-
-<figure class='code'><figcaption><span>content of /etc/default/ufw  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#DEFAULT_FORWARD_POLICY=&quot;DROP&quot;</span>
-</span><span class='line'><span class="nv">DEFAULT_FORWARD_POLICY</span><span class="o">=</span><span class="s2">&quot;ACCEPT&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在开头注释下紧接下列内容</p>
-
-<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*nat
-</span><span class='line'>:POSTROUTING ACCEPT <span class="o">[</span>0:0<span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
-</span><span class='line'>
-</span><span class='line'>COMMIT
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后在filter section下加入如下内容</p>
-
-<figure class='code'><figcaption><span>content of /etc/ufw/before.rules  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>-A ufw-before-input -i ppp+ -j ACCEPT
-</span><span class='line'>-A ufw-before-output -i ppp+ -j ACCEPT
-</span><span class='line'>-A ufw-before-forward -s 192.168.0.0/24 -j ACCEPT
-</span><span class='line'>-A ufw-before-forward -d 192.168.0.0/24 -j ACCEPT
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后重新启动ufw并且启动pptpd服务</p>
-
-<pre><code># ufw disable &amp;&amp; ufw enable
-# /etc/init.d/pptpd start
-</code></pre>
-
-<p>测试能够正常连接</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2657,6 +2564,10 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">蜜豆双皮奶制作方法</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/">oracle删除某个用户所有连接脚本</a>
       </li>
     
@@ -2670,10 +2581,6 @@ SQL&gt; @?/sqlplus/admin/pupbld.sql
     
       <li class="post">
         <a href="/blog/2012/10/26/biao-kong-jian-chuan-shu/">表空间传输</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/24/guan-yu-rac-gridyong-hu-pei-zhi-she-zhi-de-xiao-xian-jing/">关于RAC grid用户配置设置的小陷阱</a>
       </li>
     
   </ul>

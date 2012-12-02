@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: food | Strawhouse]]></title>
+  <link href="http://justlooks.github.com/blog/categories/food/atom.xml" rel="self"/>
+  <link href="http://justlooks.github.com/"/>
+  <updated>2012-12-02T13:10:13+00:00</updated>
+  <id>http://justlooks.github.com/</id>
+  <author>
+    <name><![CDATA[justlooks]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[蜜豆双皮奶制作方法]]></title>
+    <link href="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/"/>
+    <updated>2012-12-02T12:35:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa</id>
+    <content type="html"><![CDATA[<p><strong>首先是蜜豆的做法：</strong></p>
+
+<pre><code>1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
+2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
+3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
+4. 烧到水快干了就做好了
+</code></pre>
+
+<hr />
+
+<p><strong>下面是双皮奶的做法：</strong></p>
+
+<pre><code>1. 200ML牛奶，小火煮到快开不开状态，倒入碗中放冰箱凉出奶皮
+2. 1个鸡蛋分出蛋清，打碎加入10G糖
+3. 将牛奶倒入蛋清混合均匀（奶皮留原来碗里）
+4. 将3中混合物倒回碗里，隔水蒸10分钟
+5. 放凉加蜜豆，功成
+</code></pre>
+
+<p>糖不需要太多，甜味靠蜜豆，双皮奶嫩滑有浓郁的奶味，蜜豆咬起来非常软，很好吃</p>
+
+<p><img src="http://farm9.staticflickr.com/8067/8236700191_9260fe575b_m.jpg" title="好吃的蜜豆双皮奶" alt="我的图片" /></p>
+]]></content>
+  </entry>
+  
+</feed>
