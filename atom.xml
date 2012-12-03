@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-12-02T13:10:13+00:00</updated>
+  <updated>2012-12-03T01:20:17+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,201 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[设置sqlplus环境]]></title>
+    <link href="http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/"/>
+    <updated>2012-12-03T01:10:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing</id>
+    <content type="html"><![CDATA[<p>sqlplus在启动时会运行glogin.sql和login.sql两个脚本,来加载sqlplus的环境配置
+顺序是先<br/>
+在$ORACLE_HOME/sqlplus/admin下找glogin.sql,并运行,然后在当前路径下找
+login.sql<br/>
+文件,如果没找到则查找是否设置SQLPATH环境变量,如果设置在该路径下找,
+如果没找到则<br/>
+不再查找</p>
+
+<figure class='code'><figcaption><span>content of glogin.sql  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span>termout off
+</span><span class='line'>column global_name new_value gname
+</span><span class='line'>define <span class="nv">gname</span><span class="o">=</span>idle
+</span><span class='line'><span class="k">select </span>upper<span class="o">(</span>user<span class="o">)||</span><span class="s1">&#39;@&#39;</span><span class="o">||</span> instance_name||<span class="s1">&#39;/&#39;</span><span class="o">||</span>host_name global_name from v<span class="nv">$instance</span>;
+</span><span class='line'>alter session <span class="nb">set </span><span class="nv">nls_date_format</span><span class="o">=</span><span class="s1">&#39;yyyy-mm-dd hh24:mi:ss&#39;</span>;
+</span><span class='line'><span class="nb">set </span>termout on
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>sqlprompt <span class="s1">&#39;&amp;gname&gt; &#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>timing on
+</span><span class='line'><span class="nv">define_editor</span><span class="o">=</span>vi
+</span><span class='line'><span class="nb">set </span>serveroutput on size 1000000 format wrapped
+</span><span class='line'><span class="nb">set </span>linesize 170
+</span><span class='line'><span class="nb">set </span>pagesize 80
+</span><span class='line'><span class="nb">set </span>newpage none
+</span><span class='line'><span class="nb">set </span>long 1000
+</span><span class='line'>column plan_plus_exp format a80
+</span><span class='line'><span class="nb">set </span>trimspool on
+</span><span class='line'>
+</span><span class='line'>col c1 format a1
+</span><span class='line'>col cc1 format a1
+</span><span class='line'>col c2 format a2
+</span><span class='line'>col cc2 format a2
+</span><span class='line'>col c3 format a3
+</span><span class='line'>col cc3 format a3
+</span><span class='line'>col c4 format a4
+</span><span class='line'>col cc4 format a4
+</span><span class='line'>col c5 format a5
+</span><span class='line'>col cc5 format a5
+</span><span class='line'>col c6 format a6
+</span><span class='line'>col cc6 format a6
+</span><span class='line'>col c7 format a7
+</span><span class='line'>col cc7 format a7
+</span><span class='line'>col c8 format a8
+</span><span class='line'>col cc8 format a8
+</span><span class='line'>col c9 format a9
+</span><span class='line'>col cc9 format a9
+</span><span class='line'>col c10 format a10
+</span><span class='line'>col cc10 format a10
+</span><span class='line'>col c15 format a15
+</span><span class='line'>col cc15 format a15
+</span><span class='line'>col c20 format a20
+</span><span class='line'>col cc20 format a20
+</span><span class='line'>col c30 format a30
+</span><span class='line'>col cc30 format a30
+</span><span class='line'>col c40 format a40
+</span><span class='line'>col cc40 format a40
+</span><span class='line'>col c50 format a50
+</span><span class='line'>col cc50 format a50
+</span><span class='line'>col c60 format a60
+</span><span class='line'>col cc60 format a60
+</span><span class='line'>col c70 format a70
+</span><span class='line'>col cc70 format a70
+</span><span class='line'>col c80 format a80
+</span><span class='line'>col cc80 format a80
+</span><span class='line'>col c90 format a90
+</span><span class='line'>col cc90 format a90
+</span><span class='line'>col c100 format a100
+</span><span class='line'>col cc100 format a100
+</span><span class='line'>col c150 format a150
+</span><span class='line'>col cc150 format a150
+</span><span class='line'>col c200 format a200
+</span><span class='line'>col cc200 format a200
+</span><span class='line'>col c255 format a255
+</span><span class='line'>col cc255 format a255
+</span><span class='line'>col host format a30
+</span><span class='line'>col db_link format a30
+</span><span class='line'>col host format a30
+</span><span class='line'>col db_link format a30
+</span><span class='line'>col member format a60
+</span><span class='line'>col name format a60
+</span><span class='line'>col owner format a15
+</span><span class='line'>col what format a90
+</span><span class='line'>col DEST_NAME format a30
+</span><span class='line'>col OS_USERNAME format a15
+</span><span class='line'>col USERNAME format a15
+</span><span class='line'>col USERHOST format a15
+</span><span class='line'>col TERMINAL format a15
+</span><span class='line'>col OBJ_NAME format a30
+</span><span class='line'>col SQL_TEXT format a60
+</span><span class='line'>col EVENT format a70
+</span><span class='line'>col status format a60
+</span><span class='line'>col MESSAGE format a100
+</span><span class='line'>col path format a30
+</span><span class='line'>col FILE_NAME format a60
+</span><span class='line'>col DESTINATION format a50
+</span><span class='line'>col OBJECT_NAME format a30
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[蜜豆双皮奶制作方法]]></title>

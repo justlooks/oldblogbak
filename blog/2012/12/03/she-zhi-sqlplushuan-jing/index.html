@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>设置sqlplus环境 - Strawhouse</title>
+  <meta name="author" content="justlooks">
+
+  
+  <meta name="description" content="sqlplus在启动时会运行glogin.sql和login.sql两个脚本,来加载sqlplus的环境配置
+顺序是先
+在$ORACLE_HOME/sqlplus/admin下找glogin.sql,并运行,然后在当前路径下找
+login.sql
+文件, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Strawhouse" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts 
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+-->
+<link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Strawhouse</a></h1>
+  
+    <h2>Life is like a mirror, we get the best results when we smile at it.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:justlooks.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/blog">Blog</a></li>
+  <li><a href="/blog/archives/index.html">Archives</a></li>
+  <li><a href="/about/about.html">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">设置sqlplus环境</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-03T01:10:00+00:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>sqlplus在启动时会运行glogin.sql和login.sql两个脚本,来加载sqlplus的环境配置
+顺序是先<br/>
+在$ORACLE_HOME/sqlplus/admin下找glogin.sql,并运行,然后在当前路径下找
+login.sql<br/>
+文件,如果没找到则查找是否设置SQLPATH环境变量,如果设置在该路径下找,
+如果没找到则<br/>
+不再查找</p>
+
+<figure class='code'><figcaption><span>content of glogin.sql  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span>termout off
+</span><span class='line'>column global_name new_value gname
+</span><span class='line'>define <span class="nv">gname</span><span class="o">=</span>idle
+</span><span class='line'><span class="k">select </span>upper<span class="o">(</span>user<span class="o">)||</span><span class="s1">&#39;@&#39;</span><span class="o">||</span> instance_name||<span class="s1">&#39;/&#39;</span><span class="o">||</span>host_name global_name from v<span class="nv">$instance</span>;
+</span><span class='line'>alter session <span class="nb">set </span><span class="nv">nls_date_format</span><span class="o">=</span><span class="s1">&#39;yyyy-mm-dd hh24:mi:ss&#39;</span>;
+</span><span class='line'><span class="nb">set </span>termout on
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>sqlprompt <span class="s1">&#39;&amp;gname&gt; &#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set </span>timing on
+</span><span class='line'><span class="nv">define_editor</span><span class="o">=</span>vi
+</span><span class='line'><span class="nb">set </span>serveroutput on size 1000000 format wrapped
+</span><span class='line'><span class="nb">set </span>linesize 170
+</span><span class='line'><span class="nb">set </span>pagesize 80
+</span><span class='line'><span class="nb">set </span>newpage none
+</span><span class='line'><span class="nb">set </span>long 1000
+</span><span class='line'>column plan_plus_exp format a80
+</span><span class='line'><span class="nb">set </span>trimspool on
+</span><span class='line'>
+</span><span class='line'>col c1 format a1
+</span><span class='line'>col cc1 format a1
+</span><span class='line'>col c2 format a2
+</span><span class='line'>col cc2 format a2
+</span><span class='line'>col c3 format a3
+</span><span class='line'>col cc3 format a3
+</span><span class='line'>col c4 format a4
+</span><span class='line'>col cc4 format a4
+</span><span class='line'>col c5 format a5
+</span><span class='line'>col cc5 format a5
+</span><span class='line'>col c6 format a6
+</span><span class='line'>col cc6 format a6
+</span><span class='line'>col c7 format a7
+</span><span class='line'>col cc7 format a7
+</span><span class='line'>col c8 format a8
+</span><span class='line'>col cc8 format a8
+</span><span class='line'>col c9 format a9
+</span><span class='line'>col cc9 format a9
+</span><span class='line'>col c10 format a10
+</span><span class='line'>col cc10 format a10
+</span><span class='line'>col c15 format a15
+</span><span class='line'>col cc15 format a15
+</span><span class='line'>col c20 format a20
+</span><span class='line'>col cc20 format a20
+</span><span class='line'>col c30 format a30
+</span><span class='line'>col cc30 format a30
+</span><span class='line'>col c40 format a40
+</span><span class='line'>col cc40 format a40
+</span><span class='line'>col c50 format a50
+</span><span class='line'>col cc50 format a50
+</span><span class='line'>col c60 format a60
+</span><span class='line'>col cc60 format a60
+</span><span class='line'>col c70 format a70
+</span><span class='line'>col cc70 format a70
+</span><span class='line'>col c80 format a80
+</span><span class='line'>col cc80 format a80
+</span><span class='line'>col c90 format a90
+</span><span class='line'>col cc90 format a90
+</span><span class='line'>col c100 format a100
+</span><span class='line'>col cc100 format a100
+</span><span class='line'>col c150 format a150
+</span><span class='line'>col cc150 format a150
+</span><span class='line'>col c200 format a200
+</span><span class='line'>col cc200 format a200
+</span><span class='line'>col c255 format a255
+</span><span class='line'>col cc255 format a255
+</span><span class='line'>col host format a30
+</span><span class='line'>col db_link format a30
+</span><span class='line'>col host format a30
+</span><span class='line'>col db_link format a30
+</span><span class='line'>col member format a60
+</span><span class='line'>col name format a60
+</span><span class='line'>col owner format a15
+</span><span class='line'>col what format a90
+</span><span class='line'>col DEST_NAME format a30
+</span><span class='line'>col OS_USERNAME format a15
+</span><span class='line'>col USERNAME format a15
+</span><span class='line'>col USERHOST format a15
+</span><span class='line'>col TERMINAL format a15
+</span><span class='line'>col OBJ_NAME format a30
+</span><span class='line'>col SQL_TEXT format a60
+</span><span class='line'>col EVENT format a70
+</span><span class='line'>col status format a60
+</span><span class='line'>col MESSAGE format a100
+</span><span class='line'>col path format a30
+</span><span class='line'>col FILE_NAME format a60
+</span><span class='line'>col DESTINATION format a50
+</span><span class='line'>col OBJECT_NAME format a30
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">justlooks</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-03T01:10:00+00:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/oracle/'>oracle</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/" title="Previous Post: 蜜豆双皮奶制作方法">&laquo; 蜜豆双皮奶制作方法</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/12/03/she-zhi-sqlplushuan-jing/">设置sqlplus环境</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">蜜豆双皮奶制作方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/">oracle删除某个用户所有连接脚本</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/23/guan-yu-oraclezi-zeng-zhu-jian/">关于oracle自增主键</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/02/shi-yong-logminerwa-jue-redo-log/">使用logminer挖掘redo log</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>新浪微博</h1>
+  <ul id="weibo">
+    <li>
+      <iframe 
+	width="100%"
+	height="550" 
+	class="share_self"
+	frameborder="0"
+	scrolling="no"
+	src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=0&speed=0&skin=5&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2609494602&verifier=1ec3e6ac&dpc=1">
+       </iframe>
+      </li>
+     </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("justlooks", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/justlooks" class="twitter-follow-button" data-show-count="false">Follow @justlooks</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - justlooks -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'strawhouse';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/';
+        var disqus_url = 'http://justlooks.github.com/blog/2012/12/03/she-zhi-sqlplushuan-jing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
