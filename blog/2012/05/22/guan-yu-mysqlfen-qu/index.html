@@ -5,14 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>蜜豆双皮奶制作方法 - Strawhouse</title>
+  <title>关于mysql分区 - Strawhouse</title>
   <meta name="author" content="justlooks">
 
   
-  <meta name="description" content="首先是蜜豆的做法： 1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
-2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
-3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
-4. 烧到水快干了就做好了 下面是双皮奶的做法： 1. 200ML牛奶，小火煮到快开不开状态， &hellip;">
+  <meta name="description" content="Mysql对于hash和key分区模式有两种键值映射模式,liner和regular liner映射模式
+首先决定V值,算法为(如果有N个分区)
+POWER(2, CEILING( LOG(2,N) ) )
+比如在6个分区情况下,V值为8 然后决定存储到哪个分区,采用对V值取余运算 T=f(列值 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/">
+  <link rel="canonical" href="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -73,7 +73,7 @@
   
   <header>
     
-      <h1 class="entry-title">蜜豆双皮奶制作方法</h1>
+      <h1 class="entry-title">关于mysql分区</h1>
     
     
       <p class="meta">
@@ -89,7 +89,7 @@
   
 
 
-<time datetime="2012-12-02T12:35:00+00:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
+<time datetime="2012-05-22T01:43:00+00:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -98,28 +98,27 @@
   </header>
 
 
-<div class="entry-content"><p><strong>首先是蜜豆的做法：</strong></p>
+<div class="entry-content"><p>Mysql对于hash和key分区模式有两种键值映射模式,liner和regular</p>
 
-<pre><code>1. 将赤豆用水泡24小时（我因为断煤气泡了36个小时- -）
-2. 1份赤豆3份水，将水烧开倒入赤豆，烧开转小火煮
-3. 水烧到1/3后加糖，可以是冰糖（我加了红糖)
-4. 烧到水快干了就做好了
-</code></pre>
+<ol>
+<li>liner映射模式
+首先决定V值,算法为(如果有N个分区)
+POWER(2, CEILING( LOG(2,N) ) )
+比如在6个分区情况下,V值为8</li>
+</ol>
 
-<hr />
 
-<p><strong>下面是双皮奶的做法：</strong></p>
+<p>  然后决定存储到哪个分区,采用对V值取余运算
+  T=f(列值)&amp;(V-1)
+  如果计算得到的值T不小于总分区数的话,则进行额外运算
+  T&amp;CEILING(V/2)</p>
 
-<pre><code>1. 200ML牛奶，小火煮到快开不开状态，倒入碗中放冰箱凉出奶皮
-2. 1个鸡蛋分出蛋清，打碎加入10G糖
-3. 将牛奶倒入蛋清混合均匀（奶皮留原来碗里）
-4. 将3中混合物倒回碗里，隔水蒸10分钟
-5. 放凉加蜜豆，功成
-</code></pre>
+<p>优点是添加,删除合并以及分割分区非常快,缺点是分区的数据不是均匀分布</p>
 
-<p>糖不需要太多，甜味靠蜜豆，双皮奶嫩滑有浓郁的奶味，蜜豆咬起来非常软，很好吃</p>
+<ol>
+<li></li>
+</ol>
 
-<p><img src="http://farm9.staticflickr.com/8067/8236700191_9260fe575b_m.jpg" title="好吃的蜜豆双皮奶" alt="我的图片" /></p>
 </div>
 
 
@@ -142,21 +141,15 @@
   
 
 
-<time datetime="2012-12-02T12:35:00+00:00" pubdate data-updated="true">Dec 2<span>nd</span>, 2012</time>
+<time datetime="2012-05-22T01:43:00+00:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/food/'>food</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/" data-via="justlooks" data-counturl="http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/" >Tweet</a>
   
   
   
@@ -165,10 +158,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/11/24/oracleshan-chu-mou-ge-yong-hu-suo-you-lian-jie-jiao-ben/" title="Previous Post: oracle删除某个用户所有连接脚本">&laquo; oracle删除某个用户所有连接脚本</a>
+        <a class="basic-alignment left" href="/blog/2012/05/14/for-test/" title="Previous Post: 关于markdown的使用">&laquo; 关于markdown的使用</a>
       
       
-        <a class="basic-alignment right" href="/blog/2012/12/03/she-zhi-sqlplushuan-jing/" title="Next Post: 设置sqlplus环境">设置sqlplus环境 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2012/06/07/ru-he-geng-huan-octpresszhu-ti/" title="Next Post: 如何更换octpress主题">如何更换octpress主题 &raquo;</a>
       
     </p>
   </footer>
@@ -268,8 +261,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/';
-        var disqus_url = 'http://justlooks.github.com/blog/2012/12/02/mi-dou-shuang-pi-nai-zhi-zuo-fang-fa/';
+        var disqus_identifier = 'http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/';
+        var disqus_url = 'http://justlooks.github.com/blog/2012/05/22/guan-yu-mysqlfen-qu/';
         var disqus_script = 'embed.js';
       
     (function () {

@@ -4,7 +4,7 @@
   <title><![CDATA[Strawhouse]]></title>
   <link href="http://justlooks.github.com/atom.xml" rel="self"/>
   <link href="http://justlooks.github.com/"/>
-  <updated>2012-12-03T01:20:17+00:00</updated>
+  <updated>2012-12-19T06:22:47+00:00</updated>
   <id>http://justlooks.github.com/</id>
   <author>
     <name><![CDATA[justlooks]]></name>
@@ -12,6 +12,45 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[用data pump做数据迁移]]></title>
+    <link href="http://justlooks.github.com/blog/2012/12/17/yong-data-pumpzuo-shu-ju-qian-yi/"/>
+    <updated>2012-12-17T06:51:00+00:00</updated>
+    <id>http://justlooks.github.com/blog/2012/12/17/yong-data-pumpzuo-shu-ju-qian-yi</id>
+    <content type="html"><![CDATA[<p>工作中有个从测试数据库到生产数据库的数据迁移需求,因为是新项目,目前生产区和测试区还没有做隔离
+所以我考虑利用data pump和database link做数据迁移,只要1条impdp命令就可以实现</p>
+
+<p>首先创建目标库到测试库的database link
+SQL> create public database link rac1_bm_lk connect to bm_zny identified by &#8220;123456&#8221; using &#8216;172.20.101.202:1521/testdb&#8217;;</p>
+
+<p>然后赋予目标库帐号imp_full_database角色 (之前帐号需要有connect ,resource角色)</p>
+
+<p>SQL> grant imp_full_database to testme;</p>
+
+<p>进行导入操作
+impdp testme/123456 schemas=bm_hch network_link=rac1_bm_lk logfile=bm2rac.log remap_schema=bm_hch:testme remap_tablespace=users:sinopay_u</p>
+
+<p>最后返回导入错误信息
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
+Processing object type SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+ORA-39082: Object type ALTER_PACKAGE_SPEC:&#8221;TESTME&#8221;.&#8221;MIGRATION&#8221; created with compilation warnings
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
+ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MD_META&#8221; created with compilation warnings
+ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION&#8221; created with compilation warnings
+ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION_REPORT&#8221; created with compilation warnings
+ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION_TRANSFORMER&#8221; created with compilation warnings
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Job &#8220;TESTME&#8221;.&#8221;SYS_IMPORT_SCHEMA_01&#8221; completed with 6 error(s) at 14:48:40</p>
+
+<p>查了下metalink相关文档为
+Impdp Returns ORA-39082 When Importing Wrapped Procedures [ID 460267.1]</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[设置sqlplus环境]]></title>
@@ -3267,131 +3306,6 @@ _layouts/    # 这个目录关于页面布局,帖子以及类型归档等
 </code></pre>
 
 <p>mv index.html blog/index.html</p></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[关于markdown的使用]]></title>
-    <link href="http://justlooks.github.com/blog/2012/05/14/for-test/"/>
-    <updated>2012-05-14T07:35:00+00:00</updated>
-    <id>http://justlooks.github.com/blog/2012/05/14/for-test</id>
-    <content type="html"><![CDATA[<p>github默认是使用markdown来做为标记语言的，所以花了点时间简单看了下使用方法,总结如下</p>
-
-<hr />
-
-<h4>文本格式</h4>
-
-<p>1.标题<br/>
-可以用1个到6个#来表达标题大小</p>
-
-<pre><code>####标题
-</code></pre>
-
-<p>2.水平线<br/>
-由3个或者以上-或者*组成</p>
-
-<pre><code>----
-****
-</code></pre>
-
-<p>3.换行由2个以上空格组成</p>
-
-<p>4.段落分割使用空行</p>
-
-<p>5.关于有序列表和无序列表</p>
-
-<h6>有序列表</h6>
-
-<p>在列表前加入数字，之后加一个英文句点，在加一个空格</p>
-
-<pre><code>1. 项目１
-2. 项目２
-3. 项目３
-</code></pre>
-
-<h6>无序列表</h6>
-
-<p>在列表前添加*,+或者-,并在之后加1空格</p>
-
-<pre><code>* 项目 1
-+ 项目 2
-- 项目 3
-</code></pre>
-
-<!-- more -->
-
-
-<h6>列表缩排</h6>
-
-<p>子项目用tab键缩进</p>
-
-<pre><code>1. 项目1
-    + 分项1
-    - 分项2
-    * 分项3
-2. 项目2
-    + 分项4
-    - 分项5
-    * 分项6
-3. 项目3
-</code></pre>
-
-<hr />
-
-<h4>链接和图片</h4>
-
-<p>1.文本中插入超连接</p>
-
-<pre><code>&lt;http://myblog.org&gt;
-</code></pre>
-
-<p>或者为文字添加连接，及注释</p>
-
-<pre><code>[mytext](http://myblog.org "我是注释")
-</code></pre>
-
-<p>2.插入图片</p>
-
-<pre><code>![我的图片](http://我的图片url "我是注释")
-</code></pre>
-
-<hr />
-
-<h4>引用和代码插入</h4>
-
-<p>1.使用>开头能够引用一段文本,在引用中能够使用markdown的语法</p>
-
-<pre><code>&gt; ___这里是引用文本部分___
-&gt;&gt; 子引用
-</code></pre>
-
-<p>2.有两种方式来插入代码，将代码用`符号包围或者每行要插入的代码文本之前加个tab
-<code>perl -e 'print "i love perl"'</code></p>
-
-<pre><code>perl -e 'print "i love perl"'
-</code></pre>
-
-<hr />
-
-<h4>字体</h4>
-
-<h6>粗体</h6>
-
-<pre><code>__文本__
-**文本**
-</code></pre>
-
-<h6>斜体</h6>
-
-<pre><code>_文本_
-*文本*
-</code></pre>
-
-<h6>粗斜体</h6>
-
-<pre><code>___文本___
-***文本***
-</code></pre>
 ]]></content>
   </entry>
   
