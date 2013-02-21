@@ -10,8 +10,7 @@
 
   
   <meta name="description" content="工作中有个从测试数据库到生产数据库的数据迁移需求,因为是新项目,目前生产区和测试区还没有做隔离
-所以我考虑利用data pump和database link做数据迁移,只要1条impdp命令就可以实现 首先创建目标库到测试库的database link
-SQL> create public &hellip;">
+所以我考虑利用data pump和database link做数据迁移,只要1条impdp命令就可以实现 首先创建目标库到测试库的database link create database link 1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -38,6 +37,7 @@ SQL> create public &hellip;">
 </head>
 
 <body   >
+ 
   <header role="banner"><hgroup>
   <h1><a href="/">Strawhouse</a></h1>
   
@@ -100,31 +100,61 @@ SQL> create public &hellip;">
 <div class="entry-content"><p>工作中有个从测试数据库到生产数据库的数据迁移需求,因为是新项目,目前生产区和测试区还没有做隔离
 所以我考虑利用data pump和database link做数据迁移,只要1条impdp命令就可以实现</p>
 
-<p>首先创建目标库到测试库的database link
-SQL> create public database link rac1_bm_lk connect to bm_zny identified by &#8220;123456&#8221; using &#8216;172.20.101.202:1521/testdb&#8217;;</p>
+<p>首先创建目标库到测试库的database link</p>
+
+<figure class='code'><figcaption><span>create database link  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; create public database link rac1_bm_lk connect to bm_zny identified by <span class="s2">&quot;123456&quot;</span> using <span class="s1">&#39;172.20.101.202:1521/testdb&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>然后赋予目标库帐号imp_full_database角色 (之前帐号需要有connect ,resource角色)</p>
 
-<p>SQL> grant imp_full_database to testme;</p>
+<figure class='code'><figcaption><span>grant imp_full_database  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>SQL&gt; grant imp_full_database to testme;
+</span></code></pre></td></tr></table></div></figure>
 
-<p>进行导入操作
-impdp testme/123456 schemas=bm_hch network_link=rac1_bm_lk logfile=bm2rac.log remap_schema=bm_hch:testme remap_tablespace=users:sinopay_u</p>
 
-<p>最后返回导入错误信息
-Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
-Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
-Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
-Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
-Processing object type SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
-ORA-39082: Object type ALTER_PACKAGE_SPEC:&#8221;TESTME&#8221;.&#8221;MIGRATION&#8221; created with compilation warnings
-Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
-ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MD_META&#8221; created with compilation warnings
-ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION&#8221; created with compilation warnings
-ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION_REPORT&#8221; created with compilation warnings
-ORA-39082: Object type PACKAGE_BODY:&#8221;TESTME&#8221;.&#8221;MIGRATION_TRANSFORMER&#8221; created with compilation warnings
-Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
-Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
-Job &#8220;TESTME&#8221;.&#8221;SYS_IMPORT_SCHEMA_01&#8221; completed with 6 error(s) at 14:48:40</p>
+<p>进行导入操作</p>
+
+<figure class='code'><figcaption><span>impdp import data  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>impdp testme/123456 <span class="nv">schemas</span><span class="o">=</span>bm_hch <span class="nv">network_link</span><span class="o">=</span>rac1_bm_lk <span class="nv">logfile</span><span class="o">=</span>bm2rac.log <span class="nv">remap_schema</span><span class="o">=</span>bm_hch:testme <span class="nv">remap_tablespace</span><span class="o">=</span>users:sinopay_u
+</span><span class='line'>
+</span><span class='line'><span class="c">#最后返回导入错误信息</span>
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/TABLE/INDEX/INDEX
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+</span><span class='line'>ORA-39082: Object <span class="nb">type </span>ALTER_PACKAGE_SPEC:<span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;MIGRATION&quot;</span> created with compilation warnings
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
+</span><span class='line'>ORA-39082: Object <span class="nb">type </span>PACKAGE_BODY:<span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;MD_META&quot;</span> created with compilation warnings
+</span><span class='line'>ORA-39082: Object <span class="nb">type </span>PACKAGE_BODY:<span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;MIGRATION&quot;</span> created with compilation warnings
+</span><span class='line'>ORA-39082: Object <span class="nb">type </span>PACKAGE_BODY:<span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;MIGRATION_REPORT&quot;</span> created with compilation warnings
+</span><span class='line'>ORA-39082: Object <span class="nb">type </span>PACKAGE_BODY:<span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;MIGRATION_TRANSFORMER&quot;</span> created with compilation warnings
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/TABLE/TRIGGER
+</span><span class='line'>Processing object <span class="nb">type </span>SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+</span><span class='line'>Job <span class="s2">&quot;TESTME&quot;</span>.<span class="s2">&quot;SYS_IMPORT_SCHEMA_01&quot;</span> completed with 6 error<span class="o">(</span>s<span class="o">)</span> at 14:48:40
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>查了下metalink相关文档为
 Impdp Returns ORA-39082 When Importing Wrapped Procedures [ID 460267.1]</p>
@@ -262,7 +292,7 @@ Impdp Returns ORA-39082 When Importing Wrapped Procedures [ID 460267.1]</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - justlooks -
+  Copyright &copy; 2013 - justlooks -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
